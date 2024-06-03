@@ -102,7 +102,7 @@ def predict(wine: Wine):
 
 Agora, o código do servidor está pronto para inferência, embora você ainda precise ativá-lo. Se quiser testá-lo localmente (desde que tenha as dependências necessárias instaladas), você pode fazer isso usando o comando `uvicorn main:app --reload` no mesmo diretório do arquivo `main.py`. **No entanto, isso não é necessário, pois você fará a "dockerização" desse servidor em seguida**.
 
-## Dockerizando o servidor
+## "Dockerize" o servidor
 
 A partir de agora, todos os comandos serão executados presumindo-se que você esteja no diretório `no-batch/`.
 
@@ -121,73 +121,75 @@ Além disso, você deve criar um diretório chamado `app` e colocar o `main.py` 
 ```
 
 
-## Criar o Dockerfile
+## Crie o Dockerfile
 
 O `Dockerfile` é composto de todas as instruções necessárias para criar sua imagem. Se esta é a primeira vez que você vê esse tipo de arquivo, ele pode parecer intimidador, mas você verá que, na verdade, é mais fácil do que parece. Primeiro, dê uma olhada no arquivo inteiro:
 
-### Base Image
+### Imagem base
 ```Dockerfile
 FROM frolvlad/alpine-miniconda3:python3.7
 ```
 
-The `FROM` instruction allows you to select a pre-existing image as the base for your new image. **This means that all of the software available in the base image will also be available on your own.** This is one of Docker's nicest features since it allows for reusing images when needed. 
+A instrução `FROM` permite que você selecione uma imagem pré-existente como base para sua nova imagem. **Isso significa que todo o software disponível na imagem base também estará disponível na sua própria imagem.** Esse é um dos recursos mais interessantes do Docker, pois permite a reutilização de imagens quando necessário.
 
-In this case your base image is `frolvlad/alpine-miniconda3:python3.7`, let's break it down:
+Nesse caso, sua imagem de base é `frolvlad/alpine-miniconda3:python3.7`. Vamos ententendê-la passo-a-passo:
 
-- `frolvlad` is the username of the author of the image.
-- `alpine-miniconda3` is its name.
-- `python3.7` is the image's tag.
+- `frolvlad` é o nome de usuário do autor da imagem.
+- `alpine-miniconda3` é o nome da imagem.
+- `python3.7` é a *tag* da imagem.
 
-This image contains an [alpine](https://alpinelinux.org/) version of Linux, which is a distribution created to be very small in size. It also includes [miniconda](https://docs.conda.io/en/latest/miniconda.html) with Python 3. Notice that the tag let's you know that the specific version of Python being used is 3.7. Tagging is great as it allows you to create different versions of similar images. In this case you could have this same image with a different version of Python such as 3.5.
+Essa imagem contém uma versão [alpine](https://alpinelinux.org/) do Linux, que é uma distribuição criada para ser muito pequena em tamanho. Ela também inclui a [miniconda](https://docs.conda.io/en/latest/miniconda.html) com Python 3. Observe que a tag permite que você saiba que a versão específica do Python que está sendo usada é a 3.7. A marcação com tag é excelente, pois permite que você crie versões diferentes de imagens semelhantes. Nesse caso, você poderia ter essa mesma imagem com uma versão diferente do Python, como a 3.5.
 
-You could use many different base images such as the official `python:3.7` image. However if you compared the size you will encounter it is a lot heavier. In this case you will be using the one mentioned above as it is a great minimal image for the task at hand.
+Você poderia usar muitas imagens de base diferentes, como a imagem oficial `python:3.7`. Entretanto, se você comparar o tamanho, verá que ela é muito mais pesada. Nesse caso, você usará a imagem mencionada acima, pois ela é uma imagem mínima excelente para a tarefa em questão.
 
-### Installing dependencies
-Now that you have an environment with Python installed it is time to install all of the Python packages that your server will depend on. First you need to copy your local `requirements.txt` file into the image so it can be accessed by other processes, this can be done via the `COPY` instruction:
+### Instale as dependências
+Agora que você tem um ambiente com o Python instalado, é hora de instalar todos os pacotes Python dos quais seu servidor dependerá. Primeiro, é necessário copiar o arquivo local `requirements.txt` para a imagem, de modo que ele possa ser acessado por outros processos, o que pode ser feito por meio da instrução `COPY`:
 
 ```Dockerfile
 COPY requirements.txt .
 ```
 
-Now you can use `pip` to install these Python libraries. To run any command as you would on `bash`, use the `RUN` instruction:
+Agora você pode usar o `pip` para instalar essas bibliotecas Python. Para executar qualquer comando como você faria no `bash`, use a instrução `RUN`:
+
 ```Dockerfile
 RUN pip install -r requirements.txt && \
 	rm requirements.txt
 ```
-Notice that two commands were chained together using the `&&` operator. After you installed the libraries specified within `requirements.txt` you don't have more use for that file so it is a good idea to delete it so the image includes only the necessary files for your server to run.
 
-This can be done using two `RUN` instructions, however, it is a good practice to chain together commands in this manner since Docker creates a new layer every time it encounters a `RUN`, `COPY` or `ADD` instruction. This will result in a bigger image size. If you are interested in best practices for writing Dockerfiles be sure to check out this [resource](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/).
+Observe que dois comandos foram encadeados usando o operador `&&`. Depois de instalar as bibliotecas especificadas em `requirements.txt`, você não terá mais utilidade para esse arquivo, portanto, é uma boa ideia excluí-lo para que a imagem inclua apenas os arquivos necessários para a execução do servidor.
+
+Isso pode ser feito usando duas instruções `RUN`; no entanto, é uma boa prática encadear comandos dessa maneira, pois o Docker cria uma nova camada toda vez que encontra uma instrução `RUN`, `COPY` ou `ADD`. Isso resultará em um tamanho de imagem maior. Se você estiver interessado nas práticas recomendadas para escrever Dockerfiles, não deixe de conferir esta [Visão geral das práticas recomendadas para escrever Dockerfiles](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/).
 
 
-### Exposing the port
+### Exponha a porta
 
-Since you are coding a web server it is a good idea to leave some documentation about the port that the server is going to listen on. You can do this with the `EXPOSE` instruction. In this case the server will listen to requests on port 80: 
+Como você está programando um servidor da Web, é uma boa ideia deixar alguma documentação sobre a porta em que o servidor vai escutar. Você pode fazer isso com a instrução `EXPOSE`. Nesse caso, o servidor escutará as solicitações na porta 80:  
 
 ```Dockerfile
 EXPOSE 80
 ```
 
-### Copying your server into the image
+### Copie seu servidor para a imagem
 
-Now you should put your code within the image. To do this you can simply use the `COPY` instruction to copy the `app` directory within the root of the container:
+Agora você deve colocar seu código dentro da imagem. Para fazer isso, basta usar a instrução `COPY` para copiar o diretório `app` na raiz do contêiner:
 
 ```Dockerfile
 COPY ./app /app
 ```
 
-### Spinning up the server
+### Coloque o servidor pra funcionar
 
-Containers are usually meant to start and carry out a single task. This is why the `CMD` instruction was created. This is the command that will be run once a container that uses this image is started. In this case it is the command that will spin up the server by specifying the host and port. Notice that the command is written in a `JSON` like format having each part of the command as a string within a list:
+Em geral, os contêineres são destinados a iniciar e executar uma única tarefa. É por isso que a instrução `CMD` foi criada. Esse é o comando que será executado quando um contêiner que usa essa imagem for iniciado. Nesse caso, é o comando que ativará o servidor especificando o host e a porta. Observe que o comando é escrito em um formato semelhante ao `JSON`, com cada parte do comando como uma string em uma lista:
 
 ```Dockerfile
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
 ```
 
-What is meant by `JSON` like format is that Docker uses `JSON` for its configurations and the `CMD` instruction expects the commands as a list that follows `JSON` conventions.
+Isso é conhecido como formato semelhante ao `JSON`(*JSON like*), e o Docker usa o `JSON` para suas configurações e a instrução `CMD` espera os comandos como uma lista que segue as convenções do `JSON`.
 
-### Putting it all together
+### "Juntando" tudo
 
-The resulting `Dockerfile` will look like this:
+O `Dockerfile` resultante terá a seguinte aparência:
 
 ```Dockerfile
 FROM frolvlad/alpine-miniconda3:python3.7
@@ -204,23 +206,22 @@ COPY ./app /app
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
 ```
 
-Remember you can also look at it within the `no-batch` directory.
+Lembre-se de que você também pode examiná-lo no diretório `no-batch`.
 
 
-## Build the image
+## Crie a imagem
 
-Now that the `Dockerfile` is ready and you understand its contents, it is time to build the image. To do so, double check that you are within the `no-batch` directory and use the `docker build` command.
+Agora que o `Dockerfile` está pronto e você entendeu seu conteúdo, é hora de criar a imagem. Para fazer isso, verifique se você está no diretório `no-batch` e use o comando `docker build`.
+
 ```bash
 docker build -t mlepc4w2-ugl:no-batch .
 ```
 
-You can use the `-t` flag to specify the name of the image and its tag. As you saw earlier the tag comes after the colon so in this case the name is `mlepc4w2-ugl` and the tag is `no-batch`.
+Você pode usar o sinalizador `-t` para especificar o nome da imagem e sua tag. Como você viu anteriormente, a tag vem após os dois pontos, portanto, nesse caso, o nome é `mlepc4w2-ugl` e a tag é `no-batch`.
 
-After a couple of minutes your image should be ready to be used! If you want to see it along with any other images that you have on your local machine use the `docker images` command. This will display all of you images alongside their names, tags and size.
+Após alguns minutos, sua imagem deverá estar pronta para ser usada! Se quiser vê-la junto com qualquer outra imagem que tenha em sua máquina local, use o comando `docker images`. Isso exibirá todas as suas imagens juntamente com seus nomes, tags e tamanho.
 
-
-
-## Run the container
+## Execute o container
 
 Now that the image has been successfully built it is time to run a container out of it. You can do so by using the following command:
 
