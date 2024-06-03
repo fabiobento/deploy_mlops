@@ -1,3 +1,5 @@
+Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
+
 # Implantar um modelo de ML com fastAPI e Docker
 
 Durante este laboratório você implantará um servidor da Web que hospeda um modelo preditivo treinado no [wine dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_wine.html#sklearn.datasets.load_wine) usando [FastApi](https://fastapi.tiangolo.com/) e [Docker](https://www.docker.com/).
@@ -10,7 +12,7 @@ Observe que, neste laboratório, você usará um modelo classificador simples qu
 Abra seu terminal linux e vamos começar!
 
 ----
-## Por que não usar o Tensorflow Serving??
+## Por que não usar o [Tensorflow Serving](../../../1%20-%20Serviço%20de%20modelo-introdução/week1-ungraded-labs/C4_W1_Lab_3_TFS.ipynb)?
 
 Nem todos os modelos com os quais você trabalhará ao longo de sua carreira serão escritos no Tensorflow, e eles podem nem mesmo ser modelos de aprendizagem profunda. O TFS é uma ótima opção ao trabalhar com o Tensorflow, mas, na maioria das vezes, você precisará da flexibilidade extra que vem com a codificação de um servidor Web por conta própria.
 
@@ -30,15 +32,8 @@ Na documentação, serão exibidos trechos dos arquivos com uma descrição do q
 Para clonar esse repositório, use o seguinte comando:
 
 ```bash
-git clone https://github.com/https-deeplearning-ai/machine-learning-engineering-for-production-public.git
+git clone https://github.com/fabiobento/deploy_mlops.git
 ```
-
-ou para clonar via SSh use:
-
-```bash
-git clone git@github.com:https-deeplearning-ai/machine-learning-engineering-for-production-public.git
-```
-
 --------
 
 Vamos começar pela seção [Parte 1 - uma predição por solicitação](./no-batch/README.md)!
