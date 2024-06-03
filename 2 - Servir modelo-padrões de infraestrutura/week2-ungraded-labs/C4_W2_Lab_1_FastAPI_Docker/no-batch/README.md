@@ -177,7 +177,7 @@ Agora você deve colocar seu código dentro da imagem. Para fazer isso, basta us
 COPY ./app /app
 ```
 
-### Coloque o servidor pra funcionar
+### Configure a inicialização do servidor
 
 Em geral, os contêineres são destinados a iniciar e executar uma única tarefa. É por isso que a instrução `CMD` foi criada. Esse é o comando que será executado quando um contêiner que usa essa imagem for iniciado. Nesse caso, é o comando que ativará o servidor especificando o host e a porta. Observe que o comando é escrito em um formato semelhante ao `JSON`, com cada parte do comando como uma string em uma lista:
 
@@ -208,7 +208,6 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
 
 Lembre-se de que você também pode examiná-lo no diretório `no-batch`.
 
-
 ## Crie a imagem
 
 Agora que o `Dockerfile` está pronto e você entendeu seu conteúdo, é hora de criar a imagem. Para fazer isso, verifique se você está no diretório `no-batch` e use o comando `docker build`.
@@ -223,29 +222,29 @@ Após alguns minutos, sua imagem deverá estar pronta para ser usada! Se quiser 
 
 ## Execute o container
 
-Now that the image has been successfully built it is time to run a container out of it. You can do so by using the following command:
+Agora que a imagem foi criada com sucesso, é hora de executar um contêiner a partir dela. Você pode fazer isso usando o seguinte comando:
 
 ```bash
 docker run --rm -p 80:80 mlepc4w2-ugl:no-batch
 ```
 
-You should recognize this command from a previous ungraded lab. Let's do a quick recap of the flags used:
-- `--rm`: Delete this container after stopping running it. This is to avoid having to manually delete the container. Deleting unused containers helps your system to stay clean and tidy.
-- `-p 80:80`: This flags performs an operation knows as port mapping. The container, as well as your local machine, has its own set of ports. So you are able to access the port 80 within the container, you need to map it to a port on your computer. In this case it is mapped to the port 80 in your machine. 
+Vamos fazer uma rápida recapitulação dos sinalizadores(*flags*) usados na linha de comando acima:
+- `--rm`: Exclui esse contêiner depois de parar de executá-lo. Isso evita a necessidade de excluir o contêiner manualmente. A exclusão de contêineres não utilizados ajuda o sistema a ficar limpo e organizado.
+- `-p 80:80`: Esse sinalizador executa uma operação conhecida como mapeamento de porta. O contêiner, assim como sua máquina local, tem seu próprio conjunto de portas. Para que você possa acessar a porta 80 dentro do contêiner, é necessário mapeá-la para uma porta no seu computador. Nesse caso, ela é mapeada para a porta 80 em seu computador. 
 
-At the end of the command is the name and tag of the image you want to run. 
+No final do comando, há o nome e a tag da imagem que você deseja executar. 
 
-After some seconds the container will start and spin up the server within. You should be able to see FastAPI's logs being printed in the terminal. 
+Após alguns segundos, o contêiner será iniciado e o servidor será ativado. Você poderá ver os logs do FastAPI sendo impressos no terminal. 
 
-Now head over to [localhost:80](http://localhost:80) and you should see a message about the server spinning up correctly.
+Agora, acesse [localhost:80](http://localhost:80) e você verá uma mensagem sobre a inicialização correta do servidor.
 
-**Nice work!**
+**Bom trabalho!**
 
-## Make requests to the server
+## Faça solicitações ao servidor
 
-Now that the server is listening to requests on port 80, you can send `POST` requests to it for predicting classes of wine. 
+Agora que o servidor está ouvindo solicitações na porta 80, você pode enviar solicitações `POST` a ele para prever classes de vinho. 
 
-Every request should contain the data that represents a wine in `JSON` format like this:
+Cada solicitação deve conter os dados que representam um vinho no formato `JSON` como este:
 
 ```json
 {
@@ -265,11 +264,11 @@ Every request should contain the data that represents a wine in `JSON` format li
 }
 ```
 
-This example represents a class 1 wine.
+Este exemplo representa um vinho de classe 1.
 
-Remember from Course 1 that FastAPI has a built-in client for you to interact with the server. You can use it by visiting [localhost:80/docs](http://localhost:80/docs)
+Lembre-se de que o FastAPI tem um cliente interno para você interagir com o servidor. Você pode usá-lo visitando [localhost:80/docs](http://localhost:80/docs)
 
-You can also use `curl` and send the data directly with the request like this (notice that you need to open a new terminal window for this as the one you originally used to spin up the server is logging info and is not usable until you stop it):
+Também é possível usar o `curl` e enviar os dados diretamente com a solicitação desta forma (observe que é necessário abrir uma nova janela de terminal para isso, pois a que você usou originalmente para ativar o servidor está registrando informações e não poderá ser usada até que você a interrompa):
 
 ```bash
 curl -X 'POST' http://localhost/predict \
@@ -291,7 +290,7 @@ curl -X 'POST' http://localhost/predict \
 }'
 ```
 
-Or you can use a `JSON` file to avoid typing a long command like this:
+Ou você pode usar um arquivo `JSON` para evitar digitar um comando longo como este:
 
 ```bash
 curl -X POST http://localhost:80/predict \
@@ -299,19 +298,18 @@ curl -X POST http://localhost:80/predict \
     -H "Content-Type: application/json"
 ```
 
-Let's understand the flags used:
-- `-X`: Allows you to specify the request type. In this case it is a `POST` request.
-- `-d`: Stands for `data` and allows you to attach data to the request.
-- `-H`: Stands for `Headers` and it allows you to pass additional information through the request. In this case it is used to the tell the server that the data is sent in a `JSON` format.
+Vamos entender os flags usados:
+- `-X`: Permite que você especifique o tipo de solicitação. Nesse caso, trata-se de uma solicitação `POST`.
+- `-d`: Significa `data` e permite que você anexe dados à solicitação.
+- `-H`: Significa `Headers` e permite que você passe informações adicionais por meio da solicitação. Nesse caso, ele é usado para informar ao servidor que os dados são enviados em um formato `JSON`.
 
-
-There is a directory called `wine-examples` that includes three files, one for each class of wine. Use those to try out the server and also pass in some random values to see what you get!
+Há um diretório chamado `wine-examples` que inclui três arquivos, um para cada classe de vinho. Use-os para testar o servidor e também passe alguns valores aleatórios para ver o que você obtém!
 
 ----
-**Congratulations on finishing part 1 of this ungraded lab!**
+**Parabéns por concluir esse laboratório!**
 
-During this lab you saw how to code a webserver using FastAPI and how to Dockerize it. You also learned how `Dockerfiles`, `images` and `containers` are related to each other and how to use `curl` to make `POST` requests to get predictions from servers.
+Durante este laboratório, você viu como codificar um servidor da Web usando a FastAPI e como colocá-lo no Docker. Você também aprendeu como `Dockerfiles`, `images` e `containers` estão relacionados entre si e como usar `curl` para fazer solicitações `POST` para obter previsões de servidores.
 
-In the next part you will modify the server to accept batches of data instead of a single data point per request.
+Na próxima parte, você modificará o servidor para aceitar lotes de dados em vez de um único ponto de dados por solicitação.
 
-Jump to [Part 2 - Adding batching to the server](../with-batch/README.md)
+Vamos agora para [Parte 2 - Adicionando lotes ao servidor](../with-batch/README.md).
