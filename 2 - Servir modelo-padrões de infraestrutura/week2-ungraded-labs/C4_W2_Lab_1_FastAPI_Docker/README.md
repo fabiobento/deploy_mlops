@@ -27,7 +27,7 @@ Ao final deste laboratório, você terá criado duas versões do servidor da Web
 
 A melhor maneira de acompanhar o desenvolvimento do laboratório é ler esta documentação em seu navegador enquanto trabalha em uma versão clonada deste repositório em seu computador local usando um terminal.
 
-Na documentação, serão exibidos trechos dos arquivos com uma descrição do que está acontecendo. Observe que o mesmo código pode ser encontrado no repositório.
+Nesta documentação, serão exibidos trechos dos arquivos com uma descrição do que está acontecendo. Observe que o mesmo código pode ser encontrado no repositório.
 
 Para clonar esse repositório, use o seguinte comando:
 
