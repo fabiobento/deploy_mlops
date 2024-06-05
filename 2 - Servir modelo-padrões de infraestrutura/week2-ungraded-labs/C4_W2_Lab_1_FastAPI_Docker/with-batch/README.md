@@ -1,15 +1,16 @@
-## Adding batching to the server
+Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
 
-Now that you saw how to code a webserver that serves a model for inference it is time to implement some code that allows for getting predictions in batch. This is very important because right now your server can only handle one prediction per request and you are losing this feature that most machine learning predictors have been optimized to perform.
+## Adição de lotes ao servidor
 
-Begin the `cd`ing into the `with-batch` directory. If you are currently within the `no-batch` directory you can use the command `cd ../with-batch`.
+Agora que você viu como codificar um servidor da Web que serve um modelo para inferência, é hora de implementar algum código que permita obter previsões em lote. Isso é muito importante porque, no momento, seu servidor só pode lidar com uma previsão por solicitação e você está perdendo esse recurso para o qual a maioria dos preditores de aprendizado de máquina foi otimizada.
 
-## Update the server
+Inicie o `cd` no diretório `with-batch`. Se você estiver atualmente no diretório `no-batch`, poderá usar o comando `cd ../with-batch`.
 
-Remember that this code can be find within the `app/main.py` file.
+## Aualize o servidor
 
-First of all you will need two extra imports to handle prediction by batches. Both are related to handling list-like data. These are `List` from `typing` and `conlist` from `pydantic`. Remember that `REST` does not support objects like numpy arrays so you need to serialize this kind of data into lists. The imports will now look like this:
+Lembre-se de que esse código pode ser encontrado no arquivo `app/main.py`.
 
+Em primeiro lugar, você precisará de duas importações adicionais para lidar com a previsão por lotes. Ambas estão relacionadas à manipulação de dados do tipo lista. São elas `List` de `typing` e `conlist` de `pydantic`. Lembre-se de que o `REST` não oferece suporte a objetos como arrays numpy, portanto, você precisa serializar esse tipo de dados em listas. As importações agora terão a seguinte aparência:
 ```python
 import pickle
 import numpy as np
@@ -18,19 +19,20 @@ from fastapi import FastAPI
 from pydantic import BaseModel, conlist
 ```
 
-Now you will modify the `Wine` class. It used to represent a wine but now it will represent a batch of wines. To accomplish this you can set the attribute `batches` and specify that it will be of type `List` of `conlist`s. Since FastAPI enforces types of objects you need to explicitly specify them. In this case you know that the batch will be a list of arbitrary size but you also need to specify the type of the elements within that list. You could do a List of Lists of floats but there is a better alternative, using pydantic's conlist. The "con" prefix stands for `constrained`, so this is a constrained list. This type allows you to select the type of the items within the list and also the maximum and minimum number of items. In this case your model was trained using 13 features so each data point should be of size 13:
+Agora você modificará a classe `Wine`. Ela costumava representar um vinho, mas agora representará um lote de vinhos. Para fazer isso, você pode definir o atributo `batches` e especificar que ele será do tipo `List` de `conlist`. Como a FastAPI impõe tipos de objetos, você precisa especificá-los explicitamente. Nesse caso, você sabe que o lote será uma lista de tamanho arbitrário, mas também precisa especificar o tipo dos elementos dessa lista. Você poderia fazer uma lista de listas de floats, mas há uma alternativa melhor, usando o conlist do pydantic. O prefixo “con” significa `constrained`, portanto, essa é uma lista restrita. Esse tipo permite que você selecione o tipo de itens dentro da lista e também o número máximo e mínimo de itens. Nesse caso, seu modelo foi treinado usando 13 características, portanto, cada ponto de dados deve ter o tamanho 13:
+
 
 ```python
-# Represents a batch of wines
+# Representa um lote de vinhos
 class Wine(BaseModel):
     batches: List[conlist(item_type=float, min_length=13, max_length=13)]
 ```
 
-Notice that you are not explicitly naming each feature so in this case the **order of the data matters**.
+Observe que você não está nomeando explicitamente cada característica, portanto, nesse caso, a **ordem dos dados é importante**.
 
-Finally you will update the `predict` endpoint since loading the classifier is the same as in the case without batching. 
+Por fim, você atualizará o endpoint `predict`, pois o carregamento do classificador é o mesmo que no caso sem lotes. 
 
-Since scikit-learn accepts batches of data represented by numpy arrays you can simply get the batches from the `wine` object, which are lists, and convert it to numpy arrays before feeding it to the classifier. Once again you need to convert the predictions to a list to make them REST-compatible:
+Como o scikit-learn aceita lotes de dados representados por matrizes numpy, você pode simplesmente obter os lotes do objeto `wine`, que são listas, e convertê-los em matrizes numpy antes de alimentá-los no classificador. Mais uma vez, você precisa converter as previsões em uma lista para torná-las compatíveis com REST:
 
 ```python
 @app.post("/predict")
@@ -41,66 +43,64 @@ def predict(wine: Wine):
     return {"Prediction": pred}
 ```
 
-With these minor changes your server is now ready to accept batches of data! Pretty cool!
+Com essas pequenas alterações, seu servidor agora está pronto para aceitar lotes de dados! Massa!
 
-## Building a new version of the image
+## Criação de uma nova versão da imagem
 
-The Dockerfile for this new version of the server is identical to the previous one. The only changes were done within the `main.py` file so the Dockerfile remains the same.
+O Dockerfile para essa nova versão do servidor é idêntico ao anterior. As únicas alterações foram feitas no arquivo `main.py`, portanto, o Dockerfile permanece o mesmo.
 
-Now, while on the `with-batch` directory run the docker build command:
+Agora, enquanto estiver no diretório `with-batch`, execute o comando docker build:
 
 ```bash
 docker build -t mlepc4w2-ugl:with-batch . 
 ```
 
-Since the initial layers are identical to the ones of the previous image, the build process should be fairly quick. This is another great feature of Docker called `layer caching`, which caches layers for newer builds to yield lower build times.
+Como as camadas iniciais são idênticas às da imagem anterior, o processo de compilação deve ser bastante rápido. Esse é outro recurso excelente do Docker chamado `layer caching`, que armazena em cache as camadas para compilações mais recentes a fim de reduzir o tempo de compilação.
 
-Notice that the image name stays the same, but the tag changed to specify that this version of the server supports batching.
+Observe que o nome da imagem permanece o mesmo, mas a tag foi alterada para especificar que essa versão do servidor oferece suporte a lotes.
 
-## Cleaning things up
+## Limpando as coisas
 
-To check out the two images you have created you can use the following command:
+Para verificar as duas imagens que você criou, use o seguinte comando:
 
 ```bash
 docker images
 ```
 
-Sometimes when checking all of your available images you will stumble upon some images with names and tags that have the value of `none`. These are intermediate images and if you see them listed when using the `docker images` command it is usually a good practice to prune them. 
+Às vezes, ao verificar todas as imagens disponíveis, você se deparará com algumas imagens com nomes e tags que têm o valor `none`. Essas são imagens intermediárias e, se você as vir listadas ao usar o comando `docker images`, geralmente é uma boa prática removê-las. 
 
-Another way to check if you have these images in your system is to run this command:
+
+Outra maneira de verificar se você tem essas imagens em seu sistema é executar este comando:
 
 ```bash
 $(docker images --filter "dangling=true" -q --no-trunc)
 ```
 
-If there is no output it means there where no such images. In case there were some you can prune them by running the following command:
+Se não houver saída, significa que não há imagens desse tipo. Caso existam, você pode removê-las executando o seguinte comando:
 
 ```bash
 docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 ```
 
-Now if you run again the `docker images` command you should not see those intermediate images. Things are much cleaner now!
+Agora, se você executar novamente o comando `docker images`, não verá essas imagens intermediárias. As coisas estão muito mais limpas agora!
 
+## Rodar o servidor
 
-## Running the server
-
-Now you can run a container out of the image using the following command:
+Agora, você pode executar um contêiner a partir da imagem usando o seguinte comando:
 
 ```bash
 docker run --rm -p 81:80 mlepc4w2-ugl:with-batch 
 ```
+Observe que, desta vez, a porta 80 no contêiner é mapeada para a porta 81 no seu host local. Isso ocorre porque você provavelmente não interrompeu o servidor da parte 1 deste laboratório, que ainda está em execução na porta 80. Isso também serve para mostrar como o mapeamento de portas pode ser usado para mapear qualquer porta no contêiner para qualquer porta no host.
 
-Notice that this time, port 80 within the container maps to port 81 in your local host. This is because you probably haven't stopped the server from part 1 of this lab which is still running on port 80. It also serves to showcase how port mapping can be use to map from any port in the container to any port in the host.
-
-Now head over to [localhost:81](http://localhost:81) and you should see a message about the server spinning up correctly.
-
+Agora, vá até [localhost:81] (http://localhost:81) e você verá uma mensagem sobre o servidor estar funcionando corretamente.
 
 
-## Make requests to the server
+##Faça uma solicitação ao servidor
 
-Once again it is time to test your server by actually using it for prediction. In the same manner as before there are some examples of batches of data within the `wine-examples` directory. 
+Mais uma vez, é hora de testar seu servidor usando-o de fato para fazer previsões. Da mesma forma que antes, há alguns exemplos de lotes de dados no diretório `wine-examples`. 
 
-To get the predictions for a batch of 32 wines (found in the batch_1.json file) you can send a `POST` request to the server using `curl` like this:
+Para obter as previsões de um lote de 32 vinhos (encontradas no arquivo batch_1.json), você pode enviar uma solicitação `POST` para o servidor usando `curl` como esta:
 
 ```bash
 curl -X POST http://localhost:81/predict \
@@ -108,20 +108,19 @@ curl -X POST http://localhost:81/predict \
     -H "Content-Type: application/json"
 ```
 
-Now you should see a list with the 32 predictions (in order) for each one of the data points within the batch. **Nice work!**
+Agora você deve ver uma lista com as 32 previsões (em ordem) para cada um dos pontos de dados dentro do lote. **Muito bom!**
 
-## Stopping the servers
+## Parar o servidor
 
-To step to servers and the containers they are running in, simply use the key combination `ctrl + c` in the terminal window where you started the process.
+Para acessar os servidores e os contêineres em que eles estão sendo executados, basta usar a combinação de teclas `ctrl + c` na janela do terminal em que o processo foi iniciado.
 
-Alternatively you can use the `docker ps` command to check the name of the running containers and use the `docker stop name_of_container` command to stop them. Remember that you used the `--rm` flag so once you stop these containers they will also be deleted.
+Como alternativa, você pode usar o comando `docker ps` para verificar o nome dos contêineres em execução e usar o comando `docker stop name_of_container` para interrompê-los. Lembre-se de que você usou o sinalizador `--rm`, portanto, assim que parar esses contêineres, eles também serão excluídos.
 
-**Do not delete the images you created since they will be used in an upcoming lab!**
-
+**Não exclua as imagens que você criou, pois elas serão usadas em um laboratório futuro!**
 -----
 
-**Congratulations on finishing this ungraded lab!**
+**Parabéns por terminar este laboratório!**
 
-Now you should have a better understanding of how web servers can be used to host your machine learning models. You saw how you can use a library such as FastAPI to code the server and use Docker to ship your server along with your model in an easy manner. You also learned about some key concepts of Docker such as `image tagging` and `port mapping` and how  to allow for batching in the requests. In general you should have a clearer idea of how all these technologies interact to host models in production.
+Agora você deve ter uma melhor compreensão de como os servidores da Web podem ser usados para hospedar seus modelos de aprendizado de máquina. Você viu como pode usar uma biblioteca como a FastAPI para codificar o servidor e usar o Docker para enviar o servidor junto com o modelo de maneira fácil. Você também aprendeu sobre alguns conceitos-chave do Docker, como `image tagging`(marcação de imagens) e `port mapping`(mapeamento de portas), e como permitir a criação de lotes nas solicitações. Em geral, você deve ter uma ideia mais clara de como todas essas tecnologias interagem para hospedar modelos em produção.
 
-**Keep it up!**
+**Continue assim!**
