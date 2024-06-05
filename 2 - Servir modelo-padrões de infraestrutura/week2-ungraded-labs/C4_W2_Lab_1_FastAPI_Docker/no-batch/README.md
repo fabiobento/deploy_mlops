@@ -29,7 +29,6 @@ Nesse caso, um ponto de dados representa um vinho, portanto, essa classe é cham
 
 # Representa um determinado vinho (ou ponto de dados)
 class Wine(BaseModel):
-class Wine(BaseModel):
     alcohol: float
     malic_acid: float
     ash: float
