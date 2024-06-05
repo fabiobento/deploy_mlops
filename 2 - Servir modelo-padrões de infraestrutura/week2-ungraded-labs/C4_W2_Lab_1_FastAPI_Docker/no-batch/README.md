@@ -23,7 +23,7 @@ app = FastAPI(title="Predicting Wine Class")
 
 Agora você precisa de uma maneira de representar um ponto de dados. Para isso, crie uma classe que seja subclasse do `BaseModel` da pydantic e liste cada atributo com seu tipo correspondente
 
-Nesse caso, um ponto de dados representa um vinho, portanto, essa classe é chamada de `Wine` e todos os recursos do modelo são do tipo `float`:
+Nesse caso, um ponto de dados representa um vinho, portanto, essa classe é chamada de `Wine` e todos as características do modelo são do tipo `float`:
 
 ```python
 
