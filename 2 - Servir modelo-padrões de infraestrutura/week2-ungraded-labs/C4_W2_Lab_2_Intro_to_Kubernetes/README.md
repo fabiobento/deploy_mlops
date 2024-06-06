@@ -1,4 +1,19 @@
-# Ungraded Lab: Practice Kubernetes in your Local Environment
+Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
+
+# Introdução a Kubernetes
+Nesse laboratório utilizaremos o Kubernetes e, antes de prosseguir, recomendo que você dê uma olhada em como ele funciona. O site é
+https://kubernetes.io/
+e, na parte superior da página, há um grande botão que diz "*Learn Kubernetes Basics*" (Aprenda o básico do Kubernetes).
+<img src='img/introk8s.png ' alt='img/kubernetes.png'>
+
+Clique nele e você será direcionado para: 
+https://kubernetes.io/docs/tutorials/kubernetes-basics/
+
+A partir daí, você pode passar por um tutorial de como criar um cluster, implantar um aplicativo, dimensioná-lo, atualizá-lo e muito mais. É interativo, divertido e vale a pena dedicar algumas horas do seu tempo para realmente entender como o Kubernetes funciona.
+
+Talvez você também queira conferir este [tutorial em vídeo](https://youtu.be/H06qrNmGqyE). 
+
+# Pratique o Kubernetes em seu ambiente local
 
 In the previous reading item, you went through the basics of Kubernetes by doing imperative commands in the interactive shell (i.e. with `kubectl`). It shows how this tool can be used to orchestrate containers to host an application. If you haven't done that exercise, we highly encourage you to go back because we will assume that you are already familiar with the concepts discussed in [those 6 modules](https://kubernetes.io/docs/tutorials/kubernetes-basics/). This lab will be an extension of that activity and will show a few more concepts to prepare you for this week's graded assignment. Specifically, you will:
 
