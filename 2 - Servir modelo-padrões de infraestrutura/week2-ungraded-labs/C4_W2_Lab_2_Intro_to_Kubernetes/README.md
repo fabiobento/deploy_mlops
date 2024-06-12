@@ -15,23 +15,19 @@ Talvez você também queira conferir este [tutorial em vídeo](https://youtu.be/
 
 # Pratique o Kubernetes em seu ambiente local
 
-In the previous reading item, you went through the basics of Kubernetes by doing imperative commands in the interactive shell (i.e. with `kubectl`). It shows how this tool can be used to orchestrate containers to host an application. If you haven't done that exercise, we highly encourage you to go back because we will assume that you are already familiar with the concepts discussed in [those 6 modules](https://kubernetes.io/docs/tutorials/kubernetes-basics/). This lab will be an extension of that activity and will show a few more concepts to prepare you for this week's graded assignment. Specifically, you will:
+No item anterior, você viu os conceitos básicos do Kubernetes executando comandos imperativos no shell interativo (ou seja, com o `kubectl`). Ele mostra como essa ferramenta pode ser usada para orquestrar contêineres para hospedar um aplicativo. Se você não tiver feito esse exercício, recomendamos que volte a ele, pois presumiremos que você já esteja familiarizado com os conceitos discutidos [naqueles 6 módulos] (https://kubernetes.io/docs/tutorials/kubernetes-basics/). Este laboratório será uma extensão dessa atividade e mostrará mais alguns conceitos. Especificamente, você irá:
 
-* setup Kubernetes in your local machine for learning and development
+* configurar o Kubernetes em seu computador local para aprendizado e desenvolvimento
 * create Kubernetes objects using YAML files
-* deploy containers running a Tensorflow model server
-* access the deployment using a Nodeport service
-* autoscale the deployment to dynamicaly handle incoming traffic 
+* criar objetos do Kubernetes usando arquivos YAML
+* acessar a implantação usando um serviço Nodeport
+* dimensionar automaticamente a implantação para lidar dinamicamente com o tráfego de entrada 
 
-You should be able to run all the commands using Mac and Linux (tested on Ubuntu) CLI, Windows Powershell (run as Administrator) and Git Bash. In case you have limited resources or can't install in your workstation, don't worry about it. You can still refer to this document later and we'll show the expected output at each step.
+## Instalação
 
-## Installation
+Primeiro, você configurará sua máquina para executar um cluster local do Kubernetes. Isso lhe dá mais liberdade para ajustar as configurações e implementar mais recursos em comparação com o ambiente Katacoda on-line que você usou no tutorial do Kubernetes. É uma ótima ferramenta para aprendizado e também para desenvolvimento local. Há várias distribuições do Kubernetes e a mais adequada para nosso objetivo é a [Minikube](https://minikube.sigs.k8s.io/docs/). Você deve se lembrar que ela foi mencionada no primeiro módulo do exercício básico do Kubernetes.
 
-First, you will setup your machine to run a local Kubernetes cluster. This gives you more freedom to tweak settings and implement more features compared to the online Katacoda environment you used in the Kubernetes tutorial. It's a great tool for learning and for local development as well. There are several Kubernetes distributions and the one best suited for our purpose is [Minikube](https://minikube.sigs.k8s.io/docs/). You might remember it being mentioned in the first module of the Kubernetes basics exercise.
-
-*Note: If you installed Docker for Desktop in the previous ungraded labs, you may have noticed that it also has a Kubernetes Engine that can be enabled in the Settings. At the moment, we found some limitations for it in some OS and it needs more tweaking or workarounds to make all the exercises here work. Thus, we recommend using Minikube for a more seamless experience.*
-
-You will need to install the following tools to go through this lab:
+Você precisará instalar as seguintes ferramentas para realizar este laboratório:
 
 * **curl** - a command-line tool for transferring data using various network protocols. You may have a already installed this in the Docker ungraded lab but in case you haven't, [here is one reference](https://reqbin.com/Article/InstallCurl) to do so. You will use this to query your model later.
 
