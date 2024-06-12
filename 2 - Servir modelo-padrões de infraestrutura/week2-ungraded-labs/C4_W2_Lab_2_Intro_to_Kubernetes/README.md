@@ -15,7 +15,7 @@ Talvez você também queira conferir este [tutorial em vídeo](https://youtu.be/
 
 # Pratique o Kubernetes em seu ambiente local
 
-No item anterior, você viu os conceitos básicos do Kubernetes executando comandos imperativos no shell interativo (ou seja, com o `kubectl`). Ele mostra como essa ferramenta pode ser usada para orquestrar contêineres para hospedar um aplicativo. Se você não tiver feito esse exercício, recomendamos que volte a ele, pois presumiremos que você já esteja familiarizado com os conceitos discutidos [naqueles 6 módulos] (https://kubernetes.io/docs/tutorials/kubernetes-basics/). Este laboratório será uma extensão dessa atividade e mostrará mais alguns conceitos. Especificamente, você irá:
+No item anterior, você viu os conceitos básicos do Kubernetes executando comandos imperativos no shell interativo (ou seja, com o `kubectl`). Ele mostra como essa ferramenta pode ser usada para orquestrar contêineres para hospedar um aplicativo. Se você não tiver feito esse exercício, recomendamos que volte a ele, pois presumiremos que você já esteja familiarizado com os conceitos discutidos [naqueles 6 módulos](https://kubernetes.io/docs/tutorials/kubernetes-basics/). Este laboratório será uma extensão dessa atividade e mostrará mais alguns conceitos. Especificamente, você irá:
 
 * configurar o Kubernetes em seu computador local para aprendizado e desenvolvimento
 * create Kubernetes objects using YAML files
@@ -29,11 +29,9 @@ Primeiro, você configurará sua máquina para executar um cluster local do Kube
 
 Você precisará instalar as seguintes ferramentas para realizar este laboratório:
 
-* **curl** - a command-line tool for transferring data using various network protocols. You may have a already installed this in the Docker ungraded lab but in case you haven't, [here is one reference](https://reqbin.com/Article/InstallCurl) to do so. You will use this to query your model later.
+* **curl** - uma ferramenta de linha de comando para transferência de dados usando vários protocolos de rede. É possível que você já tenha instalado isso anteriormente, mas, caso não tenha, [aqui está uma referência](https://reqbin.com/Article/InstallCurl) para fazer isso. Você usará isso para consultar seu modelo mais tarde.
 
-* **Virtualbox** - Minikube is meant to run in a virtual machine (VM) so you will need virtualization software to act as the VM driver. While you can also specify `docker` as the VM driver, we found that it has limitations so it's best to use Virtualbox instead. Installation instructions can be found [here](https://www.virtualbox.org/wiki/Downloads). When prompted by your OS, make sure to allow network traffic for this software so you won't have firewall issues later on.
-
-* **kubectl** - the command line tool for interacting with Kubernetes clusters. Installation instructions can be found [here](https://kubernetes.io/docs/tasks/tools/)
+* **kubectl** - a ferramenta de linha de comando para interagir com clusters do Kubernetes. As instruções de instalação podem ser encontradas [aqui](https://kubernetes.io/docs/tasks/tools/).
 
 * **Minikube** - a Kubernetes distribution geared towards new users and development work. It is not meant for production deployments however since it can only run a single node cluster on your machine. Installation instructions [here](https://minikube.sigs.k8s.io/docs/start/).
 
