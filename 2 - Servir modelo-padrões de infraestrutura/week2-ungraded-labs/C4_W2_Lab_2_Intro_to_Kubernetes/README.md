@@ -31,102 +31,79 @@ Você precisará instalar as seguintes ferramentas para realizar este laboratór
 
 * **curl** - uma ferramenta de linha de comando para transferência de dados usando vários protocolos de rede. É possível que você já tenha instalado isso anteriormente, mas, caso não tenha, [aqui está uma referência](https://reqbin.com/Article/InstallCurl) para fazer isso. Você usará isso para consultar seu modelo mais tarde.
 
+* **Virtualbox** - O Minikube foi projetado para ser executado em uma máquina virtual (VM), portanto, você precisará de um software de virtualização para atuar como driver da VM. Embora você também possa especificar o docker como o driver da VM, ele tem limitações, portanto, é melhor usar o Virtualbox. As instruções de instalação podem ser encontradas [aqui](https://www.virtualbox.org/wiki/Downloads). Quando solicitado pelo seu sistema operacional, certifique-se de permitir o tráfego de rede para esse software para não ter problemas com o firewall posteriormente.
+
 * **kubectl** - a ferramenta de linha de comando para interagir com clusters do Kubernetes. As instruções de instalação podem ser encontradas [aqui](https://kubernetes.io/docs/tasks/tools/).
 
-* **Minikube** - a Kubernetes distribution geared towards new users and development work. It is not meant for production deployments however since it can only run a single node cluster on your machine. Installation instructions [here](https://minikube.sigs.k8s.io/docs/start/).
+* **Minikube** - uma distribuição do Kubernetes voltada para novos usuários e trabalho de desenvolvimento. No entanto, ela não se destina a implementações de produção, pois só pode executar um cluster de nó único em sua máquina. Instruções de instalação [aqui](https://minikube.sigs.k8s.io/docs/start/).
 
-<details>
-<summary> <i>Windows Users: Please click here for additional notes. </i></summary>
-
-1. Make sure that the directories to the `curl` and `kubectl` binaries are setup in your system `PATH` (or `Path`). That will allow you to execute these in the command line from any directory. Instructions can be found [here](https://www.computerhope.com/issues/ch000549.htm) in case you need to review how this is done.
-2. You may need to append a `.exe` in the commands later to make use of `curl` and `kubectl`. For example, if you see `curl --help`, please do `curl.exe --help` instead.
-3. In case you have [Git for Windows](https://git-scm.com/download/win) setup in your machine, then you can use the `Git Bash` CLI bundled with that package instead of `Windows Powershell`. Just search for it in the Search Bar to see if it is already in your system. That CLI runs like a Linux terminal so most of the commands in the next sections will run as is. But we still placed instructions in case you can only use Powershell.
-4. If you encounter errors about running VirtualBox alongside WSL2 similar to [this](https://github.com/MicrosoftDocs/WSL/issues/798), you can fallback to using Docker as the VM runtime for Minikube. Instructions are shown in the next sections in case you follow this path.
----
-</details>
-</br>
-
-## Architecture
-
-The application you'll be building will look like the figure below:
+## Arquitetura
+A aplicação que você criará será parecida com a figura abaixo
 
 <img src='img/kubernetes.png' alt='img/kubernetes.png'>
 
-You will create a deployment that spins up containers that runs a model server. In this case, that will be from the `tensorflow/serving` image you already used in the previous labs. The deployment can be accessed by external terminals (i.e. your users) through an exposed service. This brings inference requests to the model servers and responds with predictions from your model.
+Você criará uma implantação que ativa contêineres que executam um servidor de modelo. Neste caso, ele será da imagem `tensorflow/serving`. A implantação pode ser acessada por terminais externos (ou seja, seus usuários) por meio de um serviço exposto. Isso traz solicitações de inferência para os servidores de modelo e responde com previsões do seu modelo.
 
-Lastly, the deployment will spin up or spin down pods based on CPU utilization. It will start with one pod but when the load exceeds a pre-defined point, it will spin up additional pods to share the load.
+Por fim, a implantação ativará ou desativará os pods com base na utilização da CPU. Ele começará com um pod, mas quando a carga exceder um ponto predefinido, ele ativará pods adicionais para compartilhar a carga.
 
-## Start Minikube
+## Iniciar o Minikube
 
-You are now almost ready to start your Kubernetes cluster. There is just one more additional step. As mentioned earlier, Minikube runs inside a virtual machine. That implies that the pods you will create later on will only see the volumes inside this VM. Thus, if you want to load a model into your pods, then you should first mount the location of this model inside Minikube's VM. Let's set that up now.
+Agora você está quase pronto para iniciar seu cluster do Kubernetes. Há apenas mais uma etapa adicional. Como mencionado anteriormente, o Minikube é executado dentro de uma máquina virtual. Isso significa que os pods que você criará posteriormente só verão os volumes dentro dessa VM. Portanto, se você quiser carregar um modelo em seus pods, deverá primeiro montar o local desse modelo dentro da VM do Minikube. Vamos configurar isso agora.
 
-You will be using the `half_plus_two` model that you saw in earlier ungraded labs. You can copy it to your `/var/tmp` directory (Mac, Linux) or `C:/tmp` (Windows) so we'll have a common directory to mount to the VM. You can use the command below for Mac and Linux:
+Você usará o modelo `half_plus_two` que viu anteriormente. Você pode copiá-lo para o diretório `/var/tmp`. Você pode usar o comando abaixo:
 
 ```
 cp -R ./saved_model_half_plus_two_cpu /var/tmp
 ```
 
-If you're using Windows (not WSL), then you can use the GUI to create a `tmp` folder under your `C:` drive then copy the folder there. You should have a `C:/tmp/saved_model_half_plus_two_cpu` folder as a result
-
-Now you're ready to start Minikube! Run the command below to initialize the VM with Virtualbox and mount the folder containing your model file:
-
-For Mac and Linux:
+Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar a VM com o Virtualbox e montar a pasta que contém seu arquivo de modelo:
 
 ```
 minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=virtualbox
 ```
 
-For Windows:
-
-```
-minikube start --mount=True --mount-string="C:/tmp:/var/tmp" --vm-driver=virtualbox
-```
-
 <details>
-<summary> <i>Troubleshooting: Please click here if you're getting errors with these commands. </i></summary>
+<summary> <i>Solução de problemas: Clique aqui se estiver recebendo erros com esses comandos. </i></summary>
 
-* Some learners reported prompts about driver errors and thus, they can't make Virtualbox the VM driver when launching Minikube. In case you run into the same issue and can't resolve it, you can just fallback to Docker:
+* Alguns alunos relataram avisos sobre erros de driver e, portanto, não podem fazer do Virtualbox o driver da VM ao iniciar o Minikube. Caso você se depare com o mesmo problema e não consiga resolvê-lo, pode simplesmente recorrer ao Docker:
 
    ```
    minikube start --mount=True --mount-string="C:/tmp:/var/tmp" --vm-driver=docker
    ```
 
-   This would require revisions to some of the commands later and we placed that in *Troubleshooting* sections as well.
+   Isso exigiria revisões de alguns dos comandos mais tarde e colocamos isso também nas seções *Troubleshooting*.
    
-* Some learners reported getting an error about trouble accessing `https://k8s.gcr.io` and needing to configure a proxy. For that, please do these steps before starting `minikube`:
+* Alguns alunos relataram que receberam um erro sobre problemas para acessar o `https://k8s.gcr.io` e que precisavam configurar um proxy. Para isso, siga estas etapas antes de iniciar o `minikube`:
 
-   * Run `minikube ip`. This will display an IP address in your terminal.
-   * Replace `<your_minikube_ip>` in the command below with the IP address you saw above:
+   * Execute `minikube ip`. Isso exibirá um endereço IP em seu terminal.
+   * Substitua `<your_minikube_ip>` no comando abaixo pelo endereço IP que você viu acima:
    
       ```
    set NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24,<your_minikube_ip>
       ```
    
-   * Start minikube
+   * Inicie o minikube
 
 ---
 
 </details>
 </br>
 
+## Criação de objetos com arquivos YAML
 
+No tutorial básico oficial do Kubernetes, você usou principalmente o `kubectl` para criar objetos como pods, implantações e serviços. Embora isso definitivamente funcione, sua configuração será mais portátil e mais fácil de manter se você configurá-los usando arquivos [YAML](https://yaml.org/spec/1.2/spec.html). Incluímos esses arquivos no diretório `yaml` deste laboratório não avaliado para que você possa ver como eles são criados. A [Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/) também documenta os campos compatíveis com cada objeto. Por exemplo, a API para Pods pode ser encontrada [aqui](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/).
 
-
-## Creating Objects with YAML files
-
-In the official Kubernetes basics tutorial, you mainly used `kubectl` to create objects such as pods, deployments, and services. While this definitely works, your setup will be more portable and easier to maintain if you configure them using [YAML](https://yaml.org/spec/1.2/spec.html) files. We've included these in the `yaml` directory of this ungraded lab so you can peruse how these are constructed. The [Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/) also documents the supported fields for each object. For example, the API for Pods can be found [here](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/).
-
-One way to generate this when you don't have a template to begin with is to first use the `kubectl` command then use the `-o yaml` flag to output the YAML file for you. For example, the [kubectl cheatsheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/) shows that you can generate the YAML for a pod running an `nginx` image with this command:
+Uma maneira de gerar isso quando você não tem um modelo para começar é usar primeiro o comando `kubectl` e, em seguida, usar o sinalizador `-o yaml` para gerar o arquivo YAML para você. Por exemplo, o [kubectl cheatsheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/) mostra que você pode gerar o YAML para um pod executando uma imagem `nginx` com esse comando:
 
 ```
 kubectl run nginx --image=nginx --dry-run=client -o yaml > pod.yaml
 ```
 
-All objects needed for this lab are already provided and you are free to modify them later when you want to practice different settings. Let's go through them one by one in the next sections.
+Todos os objetos necessários para este laboratório já foram fornecidos e você pode modificá-los posteriormente quando quiser praticar configurações diferentes. Vamos examiná-los um a um nas próximas seções.
 
 ### Config Maps
 
-First, you will create a [config map](https://kubernetes.io/docs/concepts/configuration/configmap/) that defines a `MODEL_NAME` and `MODEL_PATH` variable. This is needed because of how the `tensorflow/serving` image is configured. If you look at the last layer of the docker file [here](https://hub.docker.com/layers/tensorflow/serving/2.6.0/images/sha256-7e831f11c9ef928c09b4064a059066484079ac819991f162a938de0ad4b0fbd5?context=explore), you'll see that it runs a `/usr/bin/tf_serving_entrypoint.sh` script when it starts the container. That script just contains this command it and it should look familiar from the previous ungraded labs:
+Primeiro, você criará um [config map](https://kubernetes.io/docs/concepts/configuration/configmap/) que define uma variável `MODEL_NAME` e `MODEL_PATH`. Isso é necessário devido ao modo como a imagem `tensorflow/serving` é configurada. Se você observar a última camada do arquivo docker [aqui](https://hub.docker.com/layers/tensorflow/serving/2.6.0/images/sha256-7e831f11c9ef928c09b4064a059066484079ac819991f162a938de0ad4b0fbd5?context=explore), verá que ele executa um script `/usr/bin/tf_serving_entrypoint.sh` quando inicia o contêiner. Esse script contém apenas esse comando:
 
 ```
 #!/bin/bash 
@@ -134,15 +111,15 @@ First, you will create a [config map](https://kubernetes.io/docs/concepts/config
 tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=${MODEL_NAME} --model_base_path=${MODEL_BASE_PATH}/${MODEL_NAME} "$@"
 ```
 
-It basically starts up the model server and uses the environment variables `MODEL_BASE_PATH` and `MODEL_NAME` to find the model. Though you can explicitly define this as well in the `Deployment` YAML file, it would be more organized to have it in a configmap so you can plug it in later. Please open `yaml/configmap.yaml` to see the sytax.
+Basicamente, ele inicia o servidor de modelos e usa as variáveis de ambiente `MODEL_BASE_PATH` e `MODEL_NAME` para localizar o modelo. Embora você também possa definir isso explicitamente no arquivo YAML `Deployment`, seria mais organizado tê-lo em um configmap para que você possa conectá-lo posteriormente. Abra `yaml/configmap.yaml` para ver a sintaxe.
 
-You can create the object now using `kubectl` as shown below. Notice the `-f` flag to specify a filename. You can also specify a directory but we'll do that later.
+Você pode criar o objeto agora usando o `kubectl`, conforme mostrado abaixo. Observe o sinalizador `-f` para especificar um nome de arquivo. Você também pode especificar um diretório, mas faremos isso mais tarde.
 
 ```
 kubectl apply -f yaml/configmap.yaml
 ```
 
-With that, you should be able to `get` and `describe` the object as before. For instance, `kubectl describe cm tfserving-configs` should show you:
+Com isso, você deve ser capaz de "obter" e "descrever" o objeto como antes. Por exemplo, `kubectl describe cm tfserving-configs` deve mostrar a você:
 
 ```
 Name:         tfserving-configs
@@ -161,81 +138,50 @@ half_plus_two
 Events:  <none>
 ```
 
-### Create a Deployment
+### Criar um Deployment
 
-You will now create the deployment for your application. Please open `yaml/deployment.yaml` to see the spec for this object. You will see that it starts up one replica, uses `tensorflow/serving` as the container image and defines environment variables via the `envFrom` tag. It also exposes port `8501` of the container because you will be sending HTTP requests to it later on. It also defines cpu and memory limits and mounts the volume from the Minikube VM to the container.
+Agora, você criará a implementação do seu aplicativo. Abra `yaml/deployment.yaml` para ver a especificação desse objeto. Você verá que ele inicia uma réplica, usa `tensorflow/serving` como a imagem do contêiner e define variáveis de ambiente por meio da tag `envFrom`. Ele também expõe a porta `8501` do contêiner porque você enviará solicitações HTTP a ele mais tarde. Ele também define os limites de CPU e memória e monta o volume da VM do Minikube para o contêiner.
 
-As before, you can apply this file to create the object:
+Como antes, você pode aplicar esse arquivo para criar o objeto:
 
 ```
 kubectl apply -f yaml/deployment.yaml
 ```
 
-Running `kubectl get deploy` after around 90 seconds should show you something like below to tell you that the deployment is ready.
+A execução de `kubectl get deploy` após cerca de 90 segundos deve mostrar algo como o que está abaixo para informar que a implantação está pronta.
 
 ```
 NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
 tf-serving-deployment   1/1     1            1           15s
 ```
 
-### Expose the deployment through a service
+### Expor o deployment através de um serviço
 
-As you learned in the Kubernetes tutorial before, you will need to create a service so your application can be accessible outside the cluster. We've included `yaml/service.yaml` for that. It defines a [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) service which exposes the node's port 30001. Requests sent to this port will be sent to the containers' specified `targetPort` which is `8501`. 
+Como você aprendeu anteriormente no tutorial do Kubernetes, será necessário criar um serviço para que seu aplicativo possa ser acessado fora do cluster. Incluímos o `yaml/service.yaml` para isso. Ele define um serviço [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) que expõe a porta 30001 do nó. As solicitações enviadas para essa porta serão enviadas para a `targetPort` especificada pelos contêineres, que é `8501`. 
 
-Please apply `yaml/service.yaml` and run `kubectl get svc tf-serving-service`. You should see something like this:
+Aplique `yaml/service.yaml` e execute `kubectl get svc tf-serving-service`. Você deverá ver algo parecido com isto:
 
 ```
 NAME                 TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
 tf-serving-service   NodePort   10.103.30.4   <none>        8501:30001/TCP   27s
 ```
 
-You can try accessing the deployment now as a sanity check. The following `curl` command will send a row of inference requests to the Nodeport service:
+Você pode tentar acessar a implantação agora para uma verificação se está tudo funcionando bem. O comando `curl` a seguir enviará uma linha de solicitações de inferência para o serviço Nodeport:
 
 ```
 curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST $(minikube ip):30001/v1/models/half_plus_two:predict
 ```
 
-If the command above does not work, you can run `minikube ip` first to get the IP address of the Minikube node. It should return a local IP address like `192.168.99.102` (If you see `127.0.0.1`, please see the troubleshooting sections below). You can then plug this in the command above by replacing the `$(minikube ip)` string. For example:
+Se o comando acima não funcionar, você pode executar `minikube ip` primeiro para obter o endereço IP do nó do Minikube. Ele deve retornar um endereço IP local como `192.168.99.102` (se você vir `127.0.0.1`, consulte as seções de solução de problemas abaixo). Você pode então inserir esse endereço no comando acima substituindo a string `$(minikube ip)`. Por exemplo:
 
 ```
 curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://192.168.99.102:30001/v1/models/half_plus_two:predict
 ```
 
 <details>
-<summary> <i> Troubleshooting: Click here if you are using Windows </i> </summary>
+<summary> <i> Solução de problemas: Clique aqui se você usou o Docker em vez do Virtualbox como o tempo de execução da VM </i> </summary>
 
-Windows users might see an error about invalid characters when using single quotes in the JSON object. You can try using double quotes instead. Here are two variations:
-
-* `curl -d "{""instances"": [1.0, 2.0, 5.0]}" -X POST $(minikube ip):30001/v1/models/half_plus_two:predict`
-* `curl -d "{\"instances\": [1.0, 2.0, 5.0]}" -X POST $(minikube ip):30001/v1/models/half_plus_two:predict`
-
----
-</details>
-<br>
-
-<details>
-<summary> <i> Troubleshooting: Click here if you are using Powershell and have VirtualBox as the VM driver </i> </summary>
-
-First, make sure that you have setup `curl` in your system `PATH` as mentioned in the curl installation instructions. Then run this command:
-
-```
-curl.exe -d '{\"instances\": [1.0, 2.0, 5.0]}' -X POST "$(minikube ip):30001/v1/models/half_plus_two:predict"
-```
-
-The changes compared to the Mac/Linux command are:
-
-* use `curl.exe` to avoid confusion with the Windows built-in `curl`. The latter is an alias for `Invoke-WebRequest`. This also implies that you’ve added the curl path to your PATH as mentioned in the curl installation instructions.
-
-* the additional `\` in the `instances` string, as well as the additional `"` in the POST URL are needed so Powershell can parse it correctly
-
----
-</details>
-<br>
-
-<details>
-<summary> <i> Troubleshooting: Click here if you used Docker instead of Virtualbox as the VM runtime </i> </summary>
-
-You will most likely get a refused connection here because the network is not yet setup. To get around that, please run this command in a separate window: `minikube service tf-serving-service`. You will see an output like below 
+Provavelmente, a conexão será recusada aqui porque a rede ainda não está configurada. Para contornar isso, execute este comando em uma janela separada: `minikube service tf-serving-service`. Você verá um resultado como o abaixo 
 
 ```
 |-----------|--------------------|----------------------|---------------------------|
@@ -251,23 +197,18 @@ You will most likely get a refused connection here because the network is not ye
 |-----------|--------------------|-------------|------------------------|
 ```
 
-This opens a tunnel to your service with a random port. Grab the URL at the bottom right box and use it in the curl command like this in Linux/Mac:
+Isso abre um túnel para seu serviço com uma porta aleatória. Pegue o URL na caixa inferior direita e use-o no comando curl da seguinte:
 
 ```
 curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://127.0.0.1:60473/v1/models/half_plus_two:predict
 ```
 
-or in Windows:
-
-```
-curl.exe -d '{\"instances\": [1.0, 2.0, 5.0]}' -X POST http://127.0.0.1:60473/v1/models/half_plus_two:predict
-```
 ---
 
 </details>
 <br>
 
-If the command is successful, you should see the results returned by the model:
+Se o comando for bem-sucedido, você verá os resultados retornados pelo modelo:
 
 ```
 {
@@ -276,31 +217,34 @@ If the command is successful, you should see the results returned by the model:
 }
 ```
 
-Great! Your application is successfully running and can be accessed outside the cluster!
+Excelente! Seu aplicativo foi executado com sucesso e pode ser acessado fora do cluster!
 
 ### Horizontal Pod Autoscaler
 
-As mentioned in the lectures, one of the great advantages of container orchestration is it allows you to scale your application depending on user needs. Kubernetes provides a [Horizontal Pod Autoscaler (HPA)](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) to create or remove replicasets based on observed metrics. To do this, the HPA queries a [Metrics Server](https://kubernetes.io/docs/tasks/debug-application-cluster/resource-metrics-pipeline/#metrics-server) to measure resource utilization such as CPU and memory. The Metrics Server is not launched by default in Minikube and needs to be enabled with the following command:
+Uma das grandes vantagens da orquestração de contêineres é que ela permite dimensionar o aplicativo de acordo com as necessidades do usuário. O Kubernetes fornece um [Horizontal Pod Autoscaler (HPA)](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) para criar ou remover conjuntos de réplicas com base nas métricas observadas. Para fazer isso, o HPA consulta um [Metrics Server](https://kubernetes.io/docs/tasks/debug-application-cluster/resource-metrics-pipeline/#metrics-server) para medir a utilização de recursos, como CPU e memória. O Metrics Server não é iniciado por padrão no Minikube e precisa ser ativado com o seguinte comando:
 
 ```
 minikube addons enable metrics-server
 ```
 
-You should see a prompt saying `🌟  The 'metrics-server' addon is enabled
-` shortly. This launches a `metrics-server` deployment in the `kube-system` namespace. Run the command below and wait for the deployment to be ready.
+
+Você deverá ver um prompt dizendo ` The 'metrics-server' addon is enabled
+`. Isso inicia uma implantação do `metrics-server` no namespace `kube-system`. Execute o comando abaixo e aguarde até que a implantação esteja pronta.
+
+
 
 ```
 kubectl get deployment metrics-server -n kube-system
 ```
 
-You should see something like:
+Você deverá ver algo como:
 
 ```
 NAME             READY   UP-TO-DATE   AVAILABLE   AGE
 metrics-server   1/1     1            1           76s
 ```
 
-With that, you can now create your autoscaler by applying `yaml/autoscale.yaml`. Please wait for about a minute so it can query the metrics server. Running `kubectl get hpa` should show: 
+Com isso, agora você pode criar seu autoscaler aplicando `yaml/autoscale.yaml`. Aguarde cerca de um minuto para que ele possa consultar o servidor de métricas. A execução de `kubectl get hpa` deve mostrar: 
 
 ```
 NAME             REFERENCE                          TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
@@ -308,22 +252,21 @@ tf-serving-hpa   Deployment/tf-serving-deployment   0%/2%    1         3        
 
 ```
 
-If it's showing `Unknown` instead of `0%` in the `TARGETS` column, you can try sending a few curl commands as you did earlier then wait for another minute.
+Se estiver mostrando `Unknown` em vez de `0%` na coluna `TARGETS`, você pode tentar enviar alguns comandos curl como fez anteriormente e aguardar mais um minuto.
 
 
-### Stress Test
+### Teste de Stress
 
-
-To test the autoscaling capability of your deployment, we provided a short bash script (`request.sh`) that will just persistently send requests to your application. Please open a new terminal window, make sure that you're in the root directory of this README file, then run this command (for Linux and Mac):
+Para testar o recurso de dimensionamento automático de sua implantação, fornecemos um script bash curto (`request.sh`) que enviará solicitações de forma persistente ao seu aplicativo. Abra uma nova janela de terminal, certifique-se de que está no diretório raiz deste arquivo README e, em seguida, execute este comando (para Linux e Mac):
 
 ```
 /bin/bash request.sh
 ```
 
 <details>
-<summary> <i>Troubleshooting: Click here if you used Docker as the VM driver instead of VirtualBox </i></summary>
+<summary> <i>Solução de problemas: Clique aqui se você usou o Docker como driver de VM em vez do VirtualBox </i></summary>
 
-If you are using a minikube tunnel for the `tf-serving-service`, then you need to modify the bash script to match the URL that you are using. Please open `request.sh` in a text editor and change `$(minikube ip)` to the URL specified in the `minikube tunnel` command earlier. For example:
+Se estiver usando um túnel minikube para o `tf-serving-service`, será necessário modificar o script bash para corresponder ao URL que você está usando. Abra o arquivo `request.sh` em um editor de texto e altere `$(minikube ip)` para o URL especificado no comando `minikube tunnel` anteriormente. Por exemplo:
 
 ```
 #!/bin/bash
@@ -339,39 +282,8 @@ done
 </details>
 </br>
 
-<details>
-<summary><i>Troubleshooting: Click here if you are using Windows Powershell</i></summary>
 
-You will need a different script for Powershell. Please do these steps to run it:
-
-1 - Please run this command in Powershell to see if scripting is enabled:
-
-```
-Get-ExecutionPolicy
-```
-
-Please remember the output value so you can set it back after the exercise. If you haven't scripted before, it is most likely set to `Restricted`.
-
-2 - Enable scripting with this command:
-
-```
-Set-ExecutionPolicy RemoteSigned
-```
-
-3 - With that, you should be able run the script in Powershell with:
-
-```
-./request.ps1
-```
-
-4 - When you’re done with the entire exercise, you can revert to the original ExecutionPolicy in step 1 (e.g. `Set-ExecutionPolicy Restricted`).
-
----
-</details>
-<br>
-
-
-You should see results being printed in quick succession:
+Você deverá ver os resultados sendo impressos em rápida sucessão:
 
 ```
 {
@@ -402,32 +314,32 @@ You should see results being printed in quick succession:
 
 ```
 
-If you're seeing connection refused, make sure that your service is still running with `kubectl get svc tf-serving-service`.
+Se estiver vendo uma conexão recusada, verifique se o serviço ainda está em execução com `kubectl get svc tf-serving-service`.
 
 
-There are several ways to monitor this but the easiest would be to use Minikube's built-in dashboard. You can launch it by running:
+Há várias maneiras de monitorar isso, mas a mais fácil seria usar o painel de controle integrado do Minikube. Você pode iniciá-lo executando:
 
 ```
 minikube dashboard
 ```
 
-If you launched this immediately after you ran the request script, you should initially see a single replica running in the `Deployments` and `Pods` section:
+Se você iniciou o processo imediatamente após executar o script de solicitação, deverá ver inicialmente uma única réplica em execução na seção `Deployments` e `Pods`:
 
 <img src='img/initial_load.png'>
 
-After about a minute of running the script, you will observe that the CPU utilization will reach 5 to 6m. This is more than the 20% that we set in the HPA so it will trigger spinning up the additional replicas:
+Após cerca de um minuto de execução do script, você observará que a utilização da CPU atingirá de 5 a 6m. Isso é mais do que os 20% que definimos no HPA e, portanto, acionará a ativação das réplicas adicionais:
 
 <img src='img/autoscale_start.png'>
 
-Finally, all 3 pods will be ready to accept request and will be sharing the load. See that each pod below shows `2.00m` CPU Usage.
+Finalmente, todos os três pods estarão prontos para aceitar solicitações e compartilharão a carga. Veja que cada pod abaixo mostra `2.00m` de uso da CPU.
 
 <img src='img/autoscaled.png'>
 
-You can now stop the `request.sh` script by pressing `Ctrl/Cmd + C`. Unlike scaling up, scaling down the number of pods will take longer before it is executed. You will wait around 5 minutes (where the CPU usage is below 1m) before you see that there is only one pod running again. This is the behavior for the `autoscaling/v1` API version we are using. There is already a `v2` in the beta stage being developed to override this behavior and you can read more about it [here](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#api-object).
+Agora você pode interromper o script `request.sh` pressionando `Ctrl/Cmd + C`. Ao contrário do aumento de escala, a redução do número de pods levará mais tempo antes de ser executada. Você aguardará cerca de 5 minutos (quando a utilização da CPU estiver abaixo de 1m) antes de ver que há apenas um pod em execução novamente. Esse é o comportamento da versão da API `autoscaling/v1` que estamos usando. Já existe uma versão `v2` em fase beta sendo desenvolvida para substituir esse comportamento e você pode ler mais sobre ela [aqui](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#api-object).
 
 ## Tear Down
 
-After you're done experimenting, you can destroy the resources you created if you want. You can simply call `kubectl delete -f yaml` to delete all resources defined in the `yaml` folder. You should see something like this:
+Quando terminar de experimentar, você poderá destruir os recursos que criou, se desejar. Você pode simplesmente chamar `kubectl delete -f yaml` para excluir todos os recursos definidos na pasta `yaml`. Você verá algo parecido com isto:
 
 ```
 horizontalpodautoscaler.autoscaling "tf-serving-hpa" deleted
@@ -436,13 +348,13 @@ deployment.apps "tf-serving-deployment" deleted
 service "tf-serving-service" deleted
 ```
 
-You can then re-create them all next time with one command by running `kubectl apply -f yaml`. Just remember to check if `metrics-server` is enabled and running.
+Você pode recriar todos eles na próxima vez com um único comando executando `kubectl apply -f yaml`. Lembre-se apenas de verificar se o `metrics-server` está ativado e em execução.
 
-If you also want to destroy the VM, then you can run `minikube delete`. 
+Se você também quiser destruir a VM, poderá executar o comando `minikube delete`. 
 
-If you used Powershell, then you can disable scripting as mentioned in the instructions earlier.
+Se você usou o Powershell, poderá desativar o scripting conforme mencionado nas instruções anteriores.
 
-## Wrap Up
+## Resumo
 
-In this lab, you got to practice more Kubernetes basics by using YAML configuration files and running the Tensorflow Serving container. This can be a baseline for you to start trying to serve your own models with an orchestration framework in mind. Most of the concepts here will be applicable to the Qwiklabs for this week so feel free to reference this document. Great job and on to the next part of the course!
+Neste laboratório, você praticou mais noções básicas do Kubernetes usando arquivos de configuração YAML e executando o contêiner Tensorflow Serving. Essa pode ser uma linha de base para você começar a tentar atender aos seus próprios modelos com uma estrutura de orquestração em mente. A maioria dos conceitos aqui será aplicável ao Qwiklabs desta semana, portanto, fique à vontade para consultar este documento. Bom trabalho e vamos para a próxima parte do curso!
 
