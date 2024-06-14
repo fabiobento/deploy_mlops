@@ -261,7 +261,7 @@ Finalmente, todos os três pods estarão prontos para aceitar solicitações e c
 
 <img src='img/autoscaled.png'>
 
-Agora você pode interromper o script `request.sh` pressionando `Ctrl/Cmd + C`. Ao contrário do aumento de escala, a redução do número de pods levará mais tempo antes de ser executada. Você aguardará cerca de 5 minutos (quando a utilização da CPU estiver abaixo de 1m) antes de ver que há apenas um pod em execução novamente. Esse é o comportamento da versão da API `autoscaling/v1` que estamos usando. Já existe uma versão `v2` em fase beta sendo desenvolvida para substituir esse comportamento e você pode ler mais sobre ela [aqui](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#api-object).
+Agora você pode interromper o script `request.sh` pressionando `Ctrl+ C`. Ao contrário do aumento de escala, a redução do número de pods levará mais tempo antes de ser executada. Você aguardará cerca de 5 minutos (quando a utilização da CPU estiver abaixo de 1m) antes de ver que há apenas um pod em execução novamente. Esse é o comportamento da versão da API `autoscaling/v1` que estamos usando. Já existe uma versão `v2` em fase beta sendo desenvolvida para substituir esse comportamento e você pode ler mais sobre ela [aqui](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#api-object).
 
 ## Tear Down
 
