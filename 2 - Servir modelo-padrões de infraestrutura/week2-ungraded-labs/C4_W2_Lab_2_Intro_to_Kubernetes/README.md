@@ -203,31 +203,11 @@ Se estiver mostrando `Unknown` em vez de `0%` na coluna `TARGETS`, você pode te
 
 ### Teste de Stress
 
-Para testar o recurso de dimensionamento automático de sua implantação, fornecemos um script bash curto (`request.sh`) que enviará solicitações de forma persistente ao seu aplicativo. Abra uma nova janela de terminal, certifique-se de que está no diretório raiz deste arquivo README e, em seguida, execute este comando (para Linux e Mac):
+Para testar o recurso de dimensionamento automático de sua implantação, fornecemos um script bash curto (`request.sh`) que enviará solicitações de forma persistente ao seu aplicativo. Abra uma nova janela de terminal, certifique-se de que está no diretório raiz deste arquivo README e, em seguida, execute este comando:
 
 ```
 /bin/bash request.sh
 ```
-
-<details>
-<summary> <i>Solução de problemas: Clique aqui se você usou o Docker como driver de VM em vez do VirtualBox </i></summary>
-
-Se estiver usando um túnel minikube para o `tf-serving-service`, será necessário modificar o script bash para corresponder ao URL que você está usando. Abra o arquivo `request.sh` em um editor de texto e altere `$(minikube ip)` para o URL especificado no comando `minikube tunnel` anteriormente. Por exemplo:
-
-```
-#!/bin/bash
-
-while sleep 0.01;
-
-do curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://127.0.0.1:60473/v1/models/half_plus_two:predict;
-
-done
-``` 
----
-
-</details>
-</br>
-
 
 Você deverá ver os resultados sendo impressos em rápida sucessão:
 
