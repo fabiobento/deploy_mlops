@@ -154,37 +154,6 @@ Se o comando acima não funcionar, você pode executar `minikube ip` primeiro pa
 ```
 curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://192.168.99.102:30001/v1/models/half_plus_two:predict
 ```
-
-<details>
-<summary> <i> Solução de problemas: Clique aqui se você usou o Docker em vez do Virtualbox como o tempo de execução da VM </i> </summary>
-
-Provavelmente, a conexão será recusada aqui porque a rede ainda não está configurada. Para contornar isso, execute este comando em uma janela separada: `minikube service tf-serving-service`. Você verá um resultado como o abaixo 
-
-```
-|-----------|--------------------|----------------------|---------------------------|
-| NAMESPACE |        NAME        |     TARGET PORT      |            URL            |
-|-----------|--------------------|----------------------|---------------------------|
-| default   | tf-serving-service | tf-serving-http/8501 | http://192.168.20.2:30001 |
-|-----------|--------------------|----------------------|---------------------------|
-🏃  Starting tunnel for service tf-serving-service.
-|-----------|--------------------|-------------|------------------------|
-| NAMESPACE |        NAME        | TARGET PORT |          URL           |
-|-----------|--------------------|-------------|------------------------|
-| default   | tf-serving-service |             | http://127.0.0.1:60473 |
-|-----------|--------------------|-------------|------------------------|
-```
-
-Isso abre um túnel para seu serviço com uma porta aleatória. Pegue o URL na caixa inferior direita e use-o no comando curl da seguinte:
-
-```
-curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://127.0.0.1:60473/v1/models/half_plus_two:predict
-```
-
----
-
-</details>
-<br>
-
 Se o comando for bem-sucedido, você verá os resultados retornados pelo modelo:
 
 ```
@@ -221,7 +190,7 @@ NAME             READY   UP-TO-DATE   AVAILABLE   AGE
 metrics-server   1/1     1            1           76s
 ```
 
-Com isso, agora você pode criar seu autoscaler aplicando `yaml/autoscale.yaml`. Aguarde cerca de um minuto para que ele possa consultar o servidor de métricas. A execução de `kubectl get hpa` deve mostrar: 
+Com isso, agora você pode criar seu autoscaler aplicando `kubectl apply -f yaml/autoscale.yaml`. Aguarde cerca de um minuto para que ele possa consultar o servidor de métricas. A execução de `kubectl get hpa` deve mostrar: 
 
 ```
 NAME             REFERENCE                          TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
