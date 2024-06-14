@@ -136,7 +136,7 @@ tf-serving-deployment   1/1     1            1           15s
 
 Como você aprendeu anteriormente no tutorial do Kubernetes, será necessário criar um serviço para que seu aplicativo possa ser acessado fora do cluster. Incluímos o `yaml/service.yaml` para isso. Ele define um serviço [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) que expõe a porta 30001 do nó. As solicitações enviadas para essa porta serão enviadas para a `targetPort` especificada pelos contêineres, que é `8501`. 
 
-Aplique `yaml/service.yaml` e execute `kubectl get svc tf-serving-service`. Você deverá ver algo parecido com isto:
+Aplique `kubectl apply -f yaml/service.yaml` e execute `kubectl get svc tf-serving-service`. Você deverá ver algo parecido com isto:
 
 ```
 NAME                 TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
