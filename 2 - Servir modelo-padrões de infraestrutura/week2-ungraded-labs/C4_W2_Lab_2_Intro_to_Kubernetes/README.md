@@ -31,7 +31,7 @@ Você precisará instalar as seguintes ferramentas para realizar este laboratór
 
 * **curl** - uma ferramenta de linha de comando para transferência de dados usando vários protocolos de rede. É possível que você já tenha instalado isso anteriormente, mas, caso não tenha, [aqui está uma referência](https://reqbin.com/Article/InstallCurl) para fazer isso. Você usará isso para consultar seu modelo mais tarde.
 
-* **Virtualbox** - O Minikube foi projetado para ser executado em uma máquina virtual (VM), portanto, você precisará de um software de virtualização para atuar como driver da VM. Embora você também possa especificar o docker como o driver da VM, ele tem limitações, portanto, é melhor usar o Virtualbox. As instruções de instalação podem ser encontradas [aqui](https://www.virtualbox.org/wiki/Downloads). Quando solicitado pelo seu sistema operacional, certifique-se de permitir o tráfego de rede para esse software para não ter problemas com o firewall posteriormente.
+* **Docker** - O Minikube foi projetado para ser executado virtualizado em uma VM ou container. Por isso vamos utilizar o [Docker](https://docs.docker.com/engine/install/) 18.09 or higher (20.10 ou superior é o remcomentado).
 
 * **kubectl** - a ferramenta de linha de comando para interagir com clusters do Kubernetes. As instruções de instalação podem ser encontradas [aqui](https://kubernetes.io/docs/tasks/tools/).
 
@@ -55,34 +55,11 @@ Você usará o modelo `half_plus_two` que viu anteriormente. Você pode copiá-l
 ```
 cp -R ./saved_model_half_plus_two_cpu /var/tmp
 ```
-
-Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar a VM com o Virtualbox e montar a pasta que contém seu arquivo de modelo:
-
-```
-minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=virtualbox
-```
-
-<details>
-<summary> <i>Solução de problemas: Clique aqui se estiver recebendo erros com esses comandos. </i></summary>
-
-* Alguns alunos relataram avisos sobre erros de driver e, portanto, não podem fazer do Virtualbox o driver da VM ao iniciar o Minikube. Caso você se depare com o mesmo problema e não consiga resolvê-lo, pode simplesmente recorrer ao Docker:
-
+Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar o Virtualbox e montar a pasta que contém seu arquivo de modelo:
    ```
    minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=docker
-   ```
+  ```
 
-   Isso exigiria revisões de alguns dos comandos mais tarde e colocamos isso também nas seções *Troubleshooting*.
-   
-* Alguns alunos relataram que receberam um erro sobre problemas para acessar o `https://k8s.gcr.io` e que precisavam configurar um proxy. Para isso, siga estas etapas antes de iniciar o `minikube`:
-
-   * Execute `minikube ip`. Isso exibirá um endereço IP em seu terminal.
-   * Substitua `<your_minikube_ip>` no comando abaixo pelo endereço IP que você viu acima:
-   
-```
-   set NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24,<your_minikube_ip>
-```
-   
-   * Inicie o minikube
 
 ---
 
