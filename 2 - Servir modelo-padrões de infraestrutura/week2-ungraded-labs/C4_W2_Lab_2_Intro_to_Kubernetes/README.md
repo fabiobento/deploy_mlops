@@ -18,7 +18,6 @@ Talvez você também queira conferir este [tutorial em vídeo](https://youtu.be/
 No item anterior, você viu os conceitos básicos do Kubernetes executando comandos imperativos no shell interativo (ou seja, com o `kubectl`). Ele mostra como essa ferramenta pode ser usada para orquestrar contêineres para hospedar um aplicativo. Se você não tiver feito esse exercício, recomendamos que volte a ele, pois presumiremos que você já esteja familiarizado com os conceitos discutidos [naqueles 6 módulos](https://kubernetes.io/docs/tutorials/kubernetes-basics/). Este laboratório será uma extensão dessa atividade e mostrará mais alguns conceitos. Especificamente, você irá:
 
 * configurar o Kubernetes em seu computador local para aprendizado e desenvolvimento
-* create Kubernetes objects using YAML files
 * criar objetos do Kubernetes usando arquivos YAML
 * acessar a implantação usando um serviço Nodeport
 * dimensionar automaticamente a implantação para lidar dinamicamente com o tráfego de entrada 
@@ -90,7 +89,7 @@ tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=${MODEL_NA
 
 Basicamente, ele inicia o servidor de modelos e usa as variáveis de ambiente `MODEL_BASE_PATH` e `MODEL_NAME` para localizar o modelo. Embora você também possa definir isso explicitamente no arquivo YAML `Deployment`, seria mais organizado tê-lo em um configmap para que você possa conectá-lo posteriormente. Abra `yaml/configmap.yaml` para ver a sintaxe.
 
-Você pode criar o objeto agora usando o `kubectl`, conforme mostrado abaixo. Observe o sinalizador `-f` para especificar um nome de arquivo. Você também pode especificar um diretório, mas faremos isso mais tarde.
+Você pode criar o objeto agora usando o `kubectl`, conforme mostrado abaixo. Observe o sinalizador `-f` para especificar um nome de arquivo.
 
 ```
 kubectl apply -f yaml/configmap.yaml
@@ -203,7 +202,7 @@ Se estiver mostrando `Unknown` em vez de `0%` na coluna `TARGETS`, você pode te
 
 ### Teste de Stress
 
-Para testar o recurso de dimensionamento automático de sua implantação, fornecemos um script bash curto (`request.sh`) que enviará solicitações de forma persistente ao seu aplicativo. Abra uma nova janela de terminal, certifique-se de que está no diretório raiz deste arquivo README e, em seguida, execute este comando:
+Para testar o recurso de dimensionamento automático de sua implantação, forneci um breve script bash (`request.sh`) que enviará solicitações de forma persistente ao seu aplicativo. Abra uma nova janela de terminal, certifique-se de que está no diretório raiz deste arquivo README e, em seguida, execute este comando:
 
 ```
 /bin/bash request.sh
