@@ -78,9 +78,9 @@ minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=virtu
    * Execute `minikube ip`. Isso exibirá um endereço IP em seu terminal.
    * Substitua `<your_minikube_ip>` no comando abaixo pelo endereço IP que você viu acima:
    
-      ```
+```
    set NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.59.0/24,192.168.49.0/24,192.168.39.0/24,<your_minikube_ip>
-      ```
+```
    
    * Inicie o minikube
 
@@ -91,7 +91,7 @@ minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=virtu
 
 ## Criação de objetos com arquivos YAML
 
-No tutorial básico oficial do Kubernetes, você usou principalmente o `kubectl` para criar objetos como pods, implantações e serviços. Embora isso definitivamente funcione, sua configuração será mais portátil e mais fácil de manter se você configurá-los usando arquivos [YAML](https://yaml.org/spec/1.2/spec.html). Incluímos esses arquivos no diretório `yaml` deste laboratório não avaliado para que você possa ver como eles são criados. A [Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/) também documenta os campos compatíveis com cada objeto. Por exemplo, a API para Pods pode ser encontrada [aqui](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/).
+No tutorial básico oficial do Kubernetes, você usou principalmente o `kubectl` para criar objetos como pods, implantações e serviços. Embora isso definitivamente funcione, sua configuração será mais portátil e mais fácil de manter se você configurá-los usando arquivos [YAML](https://yaml.org/spec/1.2/spec.html). Incluí esses arquivos no diretório `yaml` deste laboratório para que você possa ver como eles são criados. A [Kubernetes API](https://kubernetes.io/docs/reference/kubernetes-api/) também documenta os campos compatíveis com cada objeto. Por exemplo, a API para Pods pode ser encontrada [aqui](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/).
 
 Uma maneira de gerar isso quando você não tem um modelo para começar é usar primeiro o comando `kubectl` e, em seguida, usar o sinalizador `-o yaml` para gerar o arquivo YAML para você. Por exemplo, o [kubectl cheatsheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/) mostra que você pode gerar o YAML para um pod executando uma imagem `nginx` com esse comando:
 
