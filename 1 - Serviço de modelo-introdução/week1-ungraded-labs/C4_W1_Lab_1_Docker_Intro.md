@@ -40,32 +40,44 @@ Para instalar a versão gratuita do Docker, acesse este [link](https://www.docke
 
 Para testar sua instalação, vá para a linha de comando e digite o seguinte comando:
 ```bash
-docker run --rm docker/whalesay cowsay "deploying ML models is fun"
+docker run hello-world
 ```
-This command will try to run the `docker/whalesay` image. Since you probably don't have this image installed, Docker will look for it in the [Docker Hub](https://hub.docker.com/) and pull it to your machine to run it. If everything worked well you should see the following image printed in your command line:
+Esse comando rodará a imagem docker `_/hello-world`. Como você provavelmente não tem essa imagem instalada, o Docker a procurará no [Docker Hub](https://hub.docker.com/) e a levará para sua máquina para executá-la. Se tudo tiver funcionado bem, você verá a seguinte imagem impressa em sua linha de comando:
+```bash
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
 
-![whalesay](../../assets/whalesay.png)
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
 
-If you think of a funny thing for the Docker whale to say be sure to replace the message above with it and send the image to your friends.
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
 
-If the command didn't work try following the previous steps again.
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
 
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+```
 -----
-### Check your curl installation
+### Verifique sua instalação do curl
 
-Another tool that you will be using during these labs is [curl](https://curl.se/) so be sure to check that it is installed. To do so use the following command:
+Outra ferramenta que você usará durante estes laboratórios é [curl](https://curl.se/), portanto, verifique se ela está instalada. Para isso, use o seguinte comando:
 ```bash
 curl -V
 ```
 
-If the `curl` command is not recognized then you can install it on a Debian-based Linux (like Ubuntu) machine with this command:
+Se o comando `curl` não for reconhecido, você poderá instalá-lo em um computador Linux baseado no Debian (como o Ubuntu) com este comando:
 
 ```bash
 apt-get install curl
 ```
 
-If you are on other OS like Mac, look up on google how to install it, it should be pretty straightforward.
-
-`curl` is just an HTTP client, if you prefer other or an app with a graphical interface instead of the command line you can use something like [postman](https://www.postman.com/).
-
-Now you are ready to complete the rest of ungraded labs in this course! **Nice job!**
+Agora você está pronto para seguir em frente com o restante dos laboratórios! **Bom trabalho!**

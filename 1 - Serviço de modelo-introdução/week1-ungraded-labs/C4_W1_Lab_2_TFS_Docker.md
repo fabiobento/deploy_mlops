@@ -1,31 +1,30 @@
-# Ungraded lab: First look at Tensorflow Serving with Docker
+# Primeira olhada no *Tensorflow Serving* com o Docker
 
-Welcome to this ungraded lab. Here you will take a look at using [Tensorflow Serving](https://www.tensorflow.org/tfx/guide/serving) with Docker. This is one of the easiest ways to get introduced to this awesome serving system for machine learning models since the image already contains all the necessary dependencies and configuration to run TFS out of the box.
+Nesse laboratório você dará uma olhada no uso do [Tensorflow Serving](https://www.tensorflow.org/tfx/guide/serving)(TFS) com o Docker. Essa é uma das maneiras mais fáceis de conhecer esse incrível sistema de serviço para modelos de aprendizado de máquina, pois a imagem já contém todas as dependências e configurações necessárias para executar o TFS imediatamente.
 
-In this lab you will be using TFS to deploy a dummy machine learning model locally. This lab is inspired by this official TF [tutorial](https://www.tensorflow.org/tfx/serving/docker).
+Neste laboratório, você usará o TFS para implantar um modelo fictício de aprendizado de máquina localmente. Este laboratório é inspirado neste [tutorial oficial](https://www.tensorflow.org/tfx/serving/docker).
 
-If you are a Windows user remember that **this lab is meant to be run using a WSL2 shell.** To open such shell use the Windows search bar and type either `wsl` or `bash`, one of these should be available if you installed WSL2 previously.
-
-Open your terminal (or shell) and let's get started!
+Abra seu terminal (ou shell) e vamos começar!
 
 ----------------------
 
-## Pulling the image
+## Extração da imagem
 
-Begin by pulling the TFS docker image from the Docker hub:
+Comece extraindo a imagem do Docker do TFS do hub do Docker:
 
 ```bash
 docker pull tensorflow/serving
 ```
-This is the most minimal image that you can run TFS on. It contains all of the necessary dependencies to run TFS and was created with image size in mind, as a result of this it is around 400 mb in size.
+Essa é a imagem mais minimalista em que você pode executar o TFS. Ela contém todas as dependências necessárias para executar o TFS e foi criada tendo em mente favorecer o tamanho da imagem. Como resultado, ela tem cerca de 400 MB.
 
-## Clone the repo with the dummy model
+## Clonar o repositório com o modelo fictício
 
-Now you will clone the official TFS [repo](https://github.com/tensorflow/serving), which contains a dummy model named `Half Plus Two` that returns `0.5 * x + 2` for any value of `x`. 
 
-You will do the cloning in the temporary directory of your filesystem so that your machine does not get cluttered. 
+Agora você clonará o [repositório oficial do TFS](https://github.com/tensorflow/serving), que contém um modelo fictício chamado `Half Plus Two` que retorna `0.5 * x + 2` para qualquer valor de `x`. 
 
-Run the following three commands:
+Você fará a clonagem no diretório temporário do seu sistema de arquivos para que sua máquina não fique desorganizada. 
+
+Execute os três comandos a seguir:
 
 ```bash
 mkdir -p /tmp/tfserving
@@ -35,28 +34,25 @@ cd /tmp/tfserving
 git clone https://github.com/tensorflow/serving
 ```
 
-These commands perform these operations in order:
-- Create a directory called `tfserving` under the temporary directory `/tmp`.
-- Change your current directory to the one that was just created
-- Clone the repo in that location
+Esses comandos executam essas operações em ordem:
+- Criar um diretório chamado `tfserving` no diretório temporário `/tmp`.
+- Alterar seu diretório atual para o que acabou de ser criado
+- Clonar o repositório nesse local
 
-After running these commands you can return to your previous directory by using `cd -` or you can simply close this command line window.
+Depois de executar esses comandos, você pode retornar ao diretório anterior usando `cd -` ou pode simplesmente fechar essa janela de linha de comando.
 
+## Executar o serviço do Tensorflow
 
-## Run Tensorflow Serving
+Como a imagem que você acabou de extrair contém todo o software necessário para executar o modelo no TFS, tudo o que resta é executar um contêiner a partir da imagem.
 
-Since the image you just pulled contains all of the software needed to run the model under TFS, all that is left is to run a container out of the image.
-
-A vanilla `docker run` looks like this:
+Um `docker run` simples tem a seguinte aparência:
 
 ```bash
 docker run name-of-the-image
 ```
+No entanto, você pode especificar *flags* diferentes para obter funcionalidades diferentes. Você verá como isso funciona daqui a pouco.
 
-However, you can specify different flags to achieve different functionalities. You will see how this works in a bit.
-
-Take a look at the command that will spin up a container to serve the model under TFS:
-
+Dê uma olhada no comando que ativará um contêiner para servir o modelo no TFS:
 
 ```bash
 docker run --rm -p 8501:8501 \
@@ -66,78 +62,79 @@ target=/models/half_plus_two \
   -e MODEL_NAME=half_plus_two -t tensorflow/serving &
 ```
 
-Wow, there is a lot of information in this command. Let's break it down to understand what every flag is doing:
+Aqui tem um monte de informação, né? Então vamos dividi-la para entender o que cada flag está fazendo:
 
-- `--rm`: Delete this container after stopping running it. This is to avoid having to manually delete the container. Deleting unused containers helps your system to stay clean and tidy.
+- `--rm`: Excluir esse contêiner depois de parar de executá-lo. Isso evita a necessidade de excluir manualmente o contêiner. A exclusão de contêineres não utilizados ajuda seu sistema a permanecer limpo e organizado.
 
-- `-p 8501:8501`: This flags performs an operation knows as **port mapping**. The container, as well as your local machine, has its own set of ports. In order to access the `port 8501` within the container, you need to **map** it to a port on your computer. In this case it is mapped to the `port 8501` in your machine. This port is chosen as it is the default port to interact with the model through a `REST API`. If you were using a different protocol such as [`gRPC`](https://grpc.io/) you will need to use `port 8500`. More information on this in the [tutorial](https://www.tensorflow.org/tfx/serving/docker) mentioned at the beginning of the lab.
-- `--mount type=bind,source=dir/in/your/pc,target=dir/in/container`: This flag allows you to **mount** a directory in your pc to a directory within the container. This is very important because containers usually have short lifetimes and without mounting files onto them there is no way of persisting changes done to these files when the container was running.
-- `-e MODEL_NAME=half_plus_two`: Will create the environment variable `MODEL_NAME` and assign to it the value of `half_plus_two`.
-- `-t`: Attaches a pseudo-terminal to the container so you can check what is being printed in the standard streams of the container. This will allow you to see the logs printed out by TFS.
+- `-p 8501:8501`: Esse flag executa uma operação conhecida como **mapeamento de porta**. O contêiner, assim como sua máquina local, tem seu próprio conjunto de portas. Para acessar a `port 8501` no contêiner, é necessário **mapeá-la** para uma porta no seu computador. Nesse caso, ela é mapeada para a `port 8501` em seu computador. Essa porta foi escolhida por ser a porta padrão para interagir com o modelo por meio de uma `REST API`. Se você estiver usando um protocolo diferente, como o [`gRPC`](https://grpc.io/), precisará usar a `porta 8500`. Mais informações sobre isso no [tutorial](https://www.tensorflow.org/tfx/serving/docker) mencionado no início do laboratório.
+- `--mount type=bind,source=dir/in/your/pc,target=dir/in/container`: Esse flag permite **montar** um diretório no seu PC em um diretório dentro do contêiner. Isso é muito importante porque os contêineres geralmente têm vida útil curta e, sem montar arquivos neles, não há como manter as alterações feitas nesses arquivos quando o contêiner estava em execução.
 
-After running this command TFS will spin up and host the `Half Plus Two` model.
+- `-e MODEL_NAME=half_plus_two`: Criará a variável de ambiente `MODEL_NAME` e atribuirá a ela o valor de `half_plus_two`.
+- `-t`: Anexa um pseudo-terminal ao contêiner para que você possa verificar o que está sendo impresso nos fluxos padrão do contêiner. Isso permitirá que você veja os logs impressos pelo TFS.
 
+Depois de executar esse comando, o TFS será ativado e hospedará o modelo `Half Plus Two`.
 
 -------
 
-## Consuming the model
+## Consumindo o modelo
 
-Now that the model is being served on `port 8501` you can use an HTTP client to get predictions from it. Going forward you will be shown how to do this with `curl` but feel free to use any client of your choice.
+Agora que o modelo está sendo servido na `port 8501`, você pode usar um cliente HTTP para obter previsões dele. A seguir, será mostrado como fazer isso com o `curl`, mas fique à vontade para usar qualquer cliente de sua escolha.
 
-Since you need to provide some data that the server will process you should use a `HTTP POST` request.
+Como você precisa fornecer alguns dados que serão processados pelo servidor, deve usar uma solicitação `HTTP POST`.
 
-Let's do inference for a batch of three numbers, open a new command line window or tab and run the following command:
+Vamos fazer a inferência de um lote de três números, abrir uma nova janela ou guia de linha de comando e executar o seguinte comando:
 
 ```bash
 curl -d '{"instances": [1.0, 2.0, 5.0]}' \
   -X POST http://localhost:8501/v1/models/half_plus_two:predict
 ```
 
-As with the `docker run` command let's break down the flags in this one:
-- `-d`: The `d` stands for data. This is the data that you are going to send to the server for it to process. Since you are communicating with the model via `REST` you should provide the data in a `JSON` format. TFS has the convention that the **key** of this object should be the string `instances` and the **value** should be a list that contains each data point that you want to make inference for.
-- `-X`: This flag allows you to specify the desired `HTTP method`. By default `curl` uses the `GET` method but in this case it should be `POST`.
+Assim como no comando `docker run`, vamos detalhar os flags desse comando:
+- `-d`: O `d` significa data (dados). Esses são os dados que você enviará ao servidor para que ele os processe. Como você está se comunicando com o modelo via `REST`, deve fornecer os dados em um formato `JSON`. O TFS tem a convenção de que a **key** desse objeto deve ser a string `instances` e o **value** deve ser uma lista que contém cada ponto de dados para o qual você deseja fazer inferência.
+- `-X`: Esse sinalizador permite que você especifique o método `HTTP` desejado. Por padrão, o `curl` usa o método `GET`, mas, nesse caso, ele deve ser `POST`.
 
-The last parameter of the command is the `URL` where it should make the request to. Let's break down the `URL` as well:
-- `http://localhost:8501`: Stands for your own machine in the port 8501, as you specified earlier.
-- `v1`: Refers to the version of TFS used. Right now this part of the `URL` will always be `v1`.
-- `models/half_plus_two`: This part refers to what model should be served. Since you set the environment variable `MODEL_NAME` to have the value `half_plus_two`, this is the name of the model.
-- `predict`: Allows TFS to know that the model is gonna be used for inference (or prediction).
 
-After running the request you should be prompted with the prediction for each one of the three numbers you submitted.
+O último parâmetro do comando é o `URL` para o qual ele deve fazer a solicitação. Vamos detalhar o `URL` também:
+- `http://localhost:8501`: Representa sua própria máquina na porta 8501, como você especificou anteriormente.
+- `v1`: Refere-se à versão do TFS utilizada. No momento, essa parte do `URL` será sempre `v1`.
+- `models/half_plus_two`: Essa parte se refere ao modelo que deve ser servido. Como você definiu a variável de ambiente `MODEL_NAME` para ter o valor `half_plus_two`, esse é o nome do modelo.
+- `predict`: Permite que o TFS saiba que o modelo será usado para inferência (ou previsão).
+
+Depois de executar a solicitação, você deverá receber uma solicitação com a previsão para cada um dos três números que você enviou.
 
 -----
 
-## Stopping the server
+## Parar o servidor
 
-Finally you will learn how to stop the server running within the Docker container. In this case to stop the container is equivalent to stopping the server, to do so, run the following command to see all of the running Docker processes (or containers):
+Por fim, você aprenderá a parar o servidor em execução no contêiner do Docker. Nesse caso, parar o contêiner é equivalente a parar o servidor. Para isso, execute o seguinte comando para ver todos os processos (ou contêineres) do Docker em execução:
 
 ```bash
 docker ps
 ```
-This will display some relevant information for each running docker process. If you want to also check this information for stopped containers use the flag `-a`.
+Isso exibirá algumas informações relevantes para cada processo do docker em execução. Se quiser verificar essas informações também para os contêineres parados, use o flag `-a`.
 
-Docker automatically assigns a unique name to each container and this can be seen with the above command which should yield an output similar to this:
+O Docker atribui automaticamente um nome exclusivo a cada contêiner e isso pode ser visto com o comando acima, que deve gerar uma saída semelhante a esta:
 
-![container_name](../assets/container_name.png)
+![container_name](../../assets/container_name.png)
 
-To stop a container simply use the command:
+Para parar um contêiner, basta usar o comando:
 
 ```bash
 docker stop container_name
 ```
 
-In this case the command will be: 
+Nesse caso, o comando será: 
 ```bash
 docker stop laughing_yonath
 ```
 
-After some seconds you should see that the process exited on the terminal that you spined up the container.
+Após alguns segundos, você verá que o processo foi encerrado no terminal em que o contêiner foi aberto.
 
 -----
-**Congratulations on finishing this ungraded lab!**
+**Parabéns por terminar este laboratório!
 
-Now you should have a better sense of how Docker can be leveraged to serve your Machine Learning models. You should also have a better understanding of how to use the `docker run` command to spin up containers and of how to use `curl` to interact with web servers.
+Agora você deve ter uma noção melhor de como o Docker pode ser aproveitado para atender aos seus modelos de aprendizado de máquina. Você também deve entender melhor como usar o comando `docker run` para ativar contêineres e como usar o `curl` para interagir com servidores da Web.
 
-This lab used a dummy model but in future labs you will see this process with real models and further TFS features.
+Este laboratório usou um modelo fictício, mas nos próximos laboratórios você verá esse processo com modelos reais e outros recursos do TFS.
 
-**Keep it up!**
+**Continue assim!**
