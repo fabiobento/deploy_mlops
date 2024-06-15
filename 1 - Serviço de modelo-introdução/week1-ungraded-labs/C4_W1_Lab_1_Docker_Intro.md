@@ -1,3 +1,6 @@
+Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
+
+
 # Introdução ao Docker e Instalação
 
 Neste laboratório e em outros posteriores, você aprenderá diferentes técnicas que permitirão implantar modelos de aprendizado de máquina.

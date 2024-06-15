@@ -1,3 +1,6 @@
+Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
+
+
 # Primeira olhada no *Tensorflow Serving* com o Docker
 
 Nesse laboratório você dará uma olhada no uso do [Tensorflow Serving](https://www.tensorflow.org/tfx/guide/serving)(TFS) com o Docker. Essa é uma das maneiras mais fáceis de conhecer esse incrível sistema de serviço para modelos de aprendizado de máquina, pois a imagem já contém todas as dependências e configurações necessárias para executar o TFS imediatamente.
@@ -131,7 +134,7 @@ docker stop laughing_yonath
 Após alguns segundos, você verá que o processo foi encerrado no terminal em que o contêiner foi aberto.
 
 -----
-**Parabéns por terminar este laboratório!
+**Parabéns por terminar este laboratório!**
 
 Agora você deve ter uma noção melhor de como o Docker pode ser aproveitado para atender aos seus modelos de aprendizado de máquina. Você também deve entender melhor como usar o comando `docker run` para ativar contêineres e como usar o `curl` para interagir com servidores da Web.
 
