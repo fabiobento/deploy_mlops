@@ -1,38 +1,39 @@
-# Week 2 Ungraded Lab: Load testing servers with Docker Compose and Locust
+Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
 
-Welcome! During this ungraded lab you will be conducting a load test on the servers you coded in a previous ungraded lab (first one of this week). You will compare latency across four servers:
-- The server that didn't support batching
-- The one with batching and using:
-    -  batches of 1 
-    -  batches of 32
-    -  batches of 64
+# Servidores de teste de carga com Docker Compose e Locust
 
-Technically there are only two servers (the one with and the one without batching) but you will for sake of practicality consider them as separate ones since they will handle different amounts of data.
+Durante este laboratório você realizará um teste de carga nos servidores que codificou em um laboratório anterior. Você comparará a latência em quatro servidores:
+- O servidor que não oferece suporte a lotes
+- O servidor com lotes e usando:
+    - lotes de 1 
+    - lotes de 32
+    - lotes de 64
 
-You will do this by using [Locust](https://locust.io/) which is a great Open Source load testing tool and [Docker Compose](https://docs.docker.com/compose/) which allows you to run multiple-container applications.
+Tecnicamente, há apenas dois servidores (o que tem e o que não tem lotes), mas, por uma questão de praticidade, você os considerará como servidores separados, uma vez que eles manipularão quantidades diferentes de dados.
 
-You will spin a total of 5 containers, 4 for each one of the servers previously mentioned and 1 that will run Locust so you don't have to install it. Before going forward, open a terminal window and run the following command to download the Locust image, this will take some minutes so it is better to do it right away:
+Para isso, você usará o [Locust](https://locust.io/), que é uma excelente ferramenta de teste de carga de código aberto, e o [Docker Compose](https://docs.docker.com/compose/), que permite executar aplicativos com vários contêineres.
+
+Você rodará um total de 5 contêineres, 4 para cada um dos servidores mencionados anteriormente e 1 que executará o Locust para que não seja necessário instalá-lo. Antes de prosseguir, abra uma janela de terminal e execute o seguinte comando para fazer o download da imagem do Locust:
 
 ```bash
 docker pull locustio/locust
 ```
 
-You should also have the images `mlepc4w2-ugl:no-batch` and `mlepc4w2-ugl:with-batch` which you built during the previous lab. **Before going forward make sure you have these two images as well as the `locustio/locust:latest` one**. You can double check using the `docker images` command. 
+Você também deve ter as imagens `mlepc4w2-ugl:no-batch` e `mlepc4w2-ugl:with-batch` que você criou durante o laboratório anterior. **Antes de prosseguir, verifique se você tem essas duas imagens, bem como a imagem `locustio/locust:latest`**. Você pode verificar novamente usando o comando `docker images`. 
 
-Open a terminal and `cd` into the directory that contains the files needed by this lab. Assuming you are on the root of the repo you can use the command `cd course4/week2-ungraded-labs/C4_W2_Lab_3_Latency_Test_Compose`.
+Abra um terminal e acesse o diretório que contém os arquivos necessários para este laboratório. Supondo que você esteja na raiz do repositório, use o comando `cd course4/week2-ungraded-labs/C4_W2_Lab_3_Latency_Test_Compose`.
 
-
-Let's get started!
+Vamos começar!
 
 -----
 
-## Why and how to use Docker Compose
+## Por que e como usar o Docker Compose
 
-You could manually spin up the 5 containers but you will need to find a way to link them together via a network. This can be achieved using regular Docker commands but it is much easier to accomplish using Docker Compose. 
+Você poderia ativar manualmente os 5 contêineres, mas precisará encontrar uma maneira de vinculá-los por meio de uma rede. Isso pode ser feito usando comandos regulares do Docker, mas é muito mais fácil de realizar usando o Docker Compose. 
 
-Instead of running each container in a separate terminal window you can simply define a configuration file in `YAML` format and use the `docker-compose up` command to run your multi-container application. In case you haven't worked with `YAML` files, these are usually for configuration and they work in a similar fashion to Python, by using indentation to specify scope.
+Em vez de executar cada contêiner em uma janela de terminal separada, você pode simplesmente definir um arquivo de configuração no formato `YAML` e usar o comando `docker-compose up` para executar seu aplicativo com vários contêineres. Caso você nunca tenha trabalhado com arquivos `YAML`, eles geralmente são para configuração e funcionam de forma semelhante ao Python, usando indentação para especificar o escopo.
 
-Let's take a look at the beggining of `docker-compose.yml` file:
+Vamos dar uma olhada no início do arquivo `docker-compose.yml`:
 ```yml
 version: "3.9"
 services:
@@ -42,11 +43,11 @@ services:
       - locust
 ```
 
-The first line specifies the version of Compose format being used. At the time this tutorial is written the latest version is 3.9, so that is the format selected. Notice that latter versions of Compose do not require this to be explicitly stated but it is something quite common so it is worth understanding its meaning.
+A primeira linha especifica a versão do formato Compose que está sendo usada. No momento em que este tutorial foi escrito, a versão mais recente era a 3.9, portanto, esse é o formato selecionado. Observe que as versões mais recentes do Compose não exigem que isso seja explicitamente declarado, mas é algo bastante comum, portanto vale a pena entender seu significado.
 
-After this you will define each one of your `services` (or containers). You will specify the name of the service (`no-batch` in this case) along with the necessary information to run it. In this case, this is the server that does not support batching so a container that uses the image `mlepc4w2-ugl:no-batch` must be used. Notice the `links` item, this is used to tell Compose that this service will need to communicate with the service named `locust` through the network that Compose will create. 
+Depois disso, você definirá cada um dos seus `serviços` (ou contêineres). Você especificará o nome do serviço (neste caso, `no-batch`) juntamente com as informações necessárias para executá-lo. Nesse caso, esse é o servidor que não oferece suporte a lotes, portanto, um contêiner que usa a imagem `mlepc4w2-ugl:no-batch` deve ser usado. Observe o item `links`, que é usado para informar ao Compose que esse serviço precisará se comunicar com o serviço chamado `locust` por meio da rede que o Compose criará. 
 
-To better understand this, look at the complete `docker-compose.yml` file:
+Para entender melhor isso, dê uma olhada no arquivo `docker-compose.yml` completo:
 ```yml
 version: "3.9"
 services:
@@ -75,28 +76,27 @@ services:
     command: -f /mnt/locust/locustfile.py
 ```
 
-Each one of the four servers that handle predictions need to be linked to the locust service so that you can perform the load test. Notice that the the servers that support batching have identical information except for the name of the service. 
+Cada um dos quatro servidores que lidam com previsões precisa ser vinculado ao serviço locust para que você possa executar o teste de carga. Observe que os servidores que oferecem suporte a lotes têm informações idênticas, exceto pelo nome do serviço. 
 
-The locust service has some more stuff going on but at this point you have already seen how they work:
+O serviço locust tem mais algumas coisas acontecendo, mas a essa altura você já viu como eles funcionam:
 
-- First, this container will have port 8089 mapped to port 8089 in your localhost. This is for you to be able to access the service directly. 
+- Primeiro, esse contêiner terá a porta 8089 mapeada para a porta 8089 em seu host local. Isso serve para que você possa acessar o serviço diretamente. 
 
-- There is also a volume, this is very similar to the bind mounts you saw in previous labs. This allows you to mount files in your local filesystem onto the container, it is often used to persist changes but in this case it is done so you don't have to create a new image that uses the `locustio/locust` one as base and copies the `locustfile.py` inside the image. 
+- Há também um volume, que é muito semelhante às montagens bind que você viu nos laboratórios anteriores. Isso permite que você monte arquivos no seu sistema de arquivos local no contêiner. Geralmente, ele é usado para manter as alterações, mas, nesse caso, é feito para que você não precise criar uma nova imagem que use a imagem `locustio/locust` como base e copie o `locustfile.py` dentro da imagem. 
 
-- Finally the `command` item is analogous to the `CMD` instruction and it refers to the command that will be run when spinning up the container, in this case the locust server is started to perform the load testing.
+- Por fim, o item `command` é análogo à instrução `CMD` e se refere ao comando que será executado quando o contêiner for ativado; nesse caso, o servidor locust é iniciado para realizar o teste de carga.
 
-Before spinning up this multi-container application, let's take some time to understand how `locust` works at a high level.
+Antes de iniciar esse aplicativo de vários contêineres, vamos dedicar algum tempo para entender como o `locust` funciona em alto nível.
 
-## Understanding Locust
+## Entendendo o Locust
 
-By convention the file that handles the locust logic is named `locustfile.py`. Unlike Dockerfiles, this file is a regular python script. Remember you can take a look at the complete file in this repo.
+Por convenção, o arquivo que lida com a lógica do locust é denominado `locustfile.py`. Ao contrário dos Dockerfiles, esse arquivo é um script python comum. Lembre-se de que você pode dar uma olhada no arquivo completo neste repositório.
 
-The way locust works is by simulating users that will constantly send requests to your services. By doing this you can measure things like `RPS` (requests per second) or the average time each request is taking. **This is great to understand the limitations of your servers and to test if they will work under the circumstances they will be exposed once they are launched into production.**
+O funcionamento do locust consiste em simular usuários que enviarão constantemente solicitações aos seus serviços. Ao fazer isso, você pode medir coisas como `RPS` (solicitações por segundo) ou o tempo médio que cada solicitação está levando. **Isso é ótimo para entender as limitações de seus servidores e testar se eles funcionarão nas circunstâncias em que estarão expostos quando forem lançados em produção.**
 
-Using locust is actually quite straightforward. First you need to create a new class that inherits from `locust.HttpUser` and within this class you need to specify a method for every service you want to test. These functions should be decorated with the `locust.task` decorator. 
+O uso do locust é, na verdade, bastante simples. Primeiro, você precisa criar uma nova classe que herde de `locust.HttpUser` e, dentro dessa classe, especificar um método para cada serviço que deseja testar. Essas funções devem ser decoradas com o decorador `locust.task`. 
 
-Take a look at how this looks:
-
+Dê uma olhada em como isso se parece:
 ```python
 class LoadTest(HttpUser):
     wait_time = constant(0)
@@ -110,21 +110,20 @@ class LoadTest(HttpUser):
         )
 ```
 
-Notice the two variables `wait_time` and `host`, let's quickly clarify those: 
+Observe as duas variáveis `wait_time` e `host`, vamos esclarecê-las rapidamente: 
 
-- `wait_time` tells locust how much time to wait between each request, in this case you want it to send requests as soon as possible to see how the servers perform under extreme conditions. The constant function is actually `locust.constant`.
+- `wait_time` informa ao locust quanto tempo deve ser aguardado entre cada solicitação; nesse caso, você deseja que ele envie solicitações o mais rápido possível para ver o desempenho dos servidores em condições extremas. A função constante é, na verdade, `locust.constant`.
 
-- `host` specify the host where the service you are testing is hosted. Locust is usually meant to test several endpoints within the same host, but in this case we are testing four different servers located on four different hosts. In this case `host` defaults to 
-`http://localhost` but you will actually specify each host within the task functions so this parameter actually does nothing but it is required by locust so you need to specify some value.
+- O `host` especifica o host onde o serviço que está sendo testado está hospedado. Normalmente, o Locust é destinado a testar vários pontos de extremidade no mesmo host, mas, neste caso, estamos testando quatro servidores diferentes localizados em quatro hosts diferentes. Nesse caso, o padrão do `host` é 
+`http://localhost`, mas, na verdade, você especificará cada host nas funções de tarefa, de modo que esse parâmetro não faz nada, mas é exigido pelo locust, portanto, você precisa especificar algum valor.
 
-Now let's understand the task method to test the server that will handle batches of 1 data point. This is a method of the `LoadTest` class so it must have `self` as a parameter. 
+Agora vamos entender o método de tarefa para testar o servidor que manipulará lotes de 1 ponto de dados. Esse é um método da classe `LoadTest`, portanto, ele deve ter `self` como parâmetro. 
 
-In this case you are not interested in the actual predictions of the server so you will define a generic batch of data containing only 1's. Use this list of lists (which is what the server expects) to create a dictionary and pass it as `JSON` when doing the `POST` request. The request is done by using the `self.client.post` function. Notice the URL that is passed to this function, it is `http://batch-1:80/predict`. 
+Nesse caso, você não está interessado nas previsões reais do servidor, portanto, definirá um lote genérico de dados contendo apenas 1. Use essa lista de listas (que é o que o servidor espera) para criar um dicionário e passá-lo como `JSON` ao fazer a solicitação `POST`. A solicitação é feita usando a função `self.client.post`. Observe a URL que é passada para essa função, que é `http://batch-1:80/predict`. 
 
-Remember that all of the servers listen on port `80` of their respective containers and the model is hosted on the `/predict` endpoint. **Something very important is the hostname used, in this case it is `batch-1`, which is what you named the service that will handle batches of 1 in the `docker-compose.yml` file.**
+Lembre-se de que todos os servidores escutam na porta `80` de seus respectivos contêineres e o modelo é hospedado no ponto de extremidade `/predict`. **Algo muito importante é o nome do host utilizado; nesse caso, é `batch-1`, que é o nome que você deu ao serviço que lidará com lotes de 1 no arquivo `docker-compose.yml`.
 
-The methods to test the other servers are nearly identical to this one, except for the URL used and the data passed to the request. Take a look at the complete `locustfile.py`:
-
+Os métodos para testar os outros servidores são praticamente idênticos a esse, exceto pelo URL usado e pelos dados passados para a solicitação. Dê uma olhada no `locustfile.py` completo:
 
 ```python
 from locust import HttpUser, task, constant
@@ -177,50 +176,49 @@ class LoadTest(HttpUser):
         )
 ```
 
+Agora que você entende como o locust funciona, finalmente chegou a hora de realizar testes de carga em seus servidores!
 
-Now that you understand how locust works it is finally time to perform load testing on your servers!
+## Teste de carga dos servidores
 
-## Load Testing the servers
-
-Be sure that you are in the same directory as the `locustfile.py` and `docker-compose.yml` files and run the following command:
+Verifique se você está no mesmo diretório dos arquivos `locustfile.py` e `docker-compose.yml` e execute o seguinte comando:
 
 ```bash
 docker-compose up
 ```
 
-Docker Compose will automatically spin up all of your services and create a network for them to communicate. Isn't that neat?
+O Docker Compose ativará automaticamente todos os seus serviços e criará uma rede para que eles se comuniquem. Não é bacana?
 
-Now head over to [http://localhost:8089/](http://localhost:8089/) and you will see locust's interface. Here you can select the amount of users you desire as well as the spawn rate (this is how many new users per second are added until reaching the total amount desired).
+Agora vá para [http://localhost:8089/](http://localhost:8089/) e você verá a interface do locust. Aqui você pode selecionar a quantidade de usuários que deseja, bem como a taxa de geração (quantos novos usuários por segundo são adicionados até atingir a quantidade total desejada).
 
-**Start with low values because the more users you add more memory will be required and you risk crashing the application.** A good start point is 10 Number of users and 10 Spawn rate. 
+**Comece com valores baixos, pois quanto mais usuários forem adicionados, mais memória será necessária e você corre o risco de travar o aplicativo.** Um bom ponto de partida é 10 usuários e 10 de *Spawn rate*. 
 
-Now click on the `Start swarming` button and the load test will start. You will see a dashboard that looks like this:
+Agora, clique no botão `Start swarming` e o teste de carga será iniciado. Você verá um painel com a seguinte aparência:
 
-![locust](../../assets/locust-home.png)
+![locust](../../../assets/locust-home.png)
 
-Each row corresponds to a service you are testing. You can tell which is which by looking at the name (these were defined in the `locustfile.py`). 
+Cada linha corresponde a um serviço que você está testando. Você pode saber qual é qual observando o nome (eles foram definidos no `locustfile.py`). 
 
-The first two columns show you the number of requests sent to each server and the number of those requests that failed.
+As duas primeiras colunas mostram o número de solicitações enviadas a cada servidor e o número de solicitações que falharam.
 
-The next five columns (highlighted in orange) shows some descriptive statistics about the latency of the servers in milliseconds. 
+As próximas cinco colunas (destacadas em laranja) mostram algumas estatísticas descritivas sobre a latência dos servidores em milissegundos. 
 
-The next column (highlighted in pink) shows the average amount of bytes that is being handled by the server with each request. Notice that the larger the batches, the larger this number will be.
+A próxima coluna (destacada em rosa) mostra a quantidade média de bytes que está sendo processada pelo servidor com cada solicitação. Observe que quanto maiores os lotes, maior será esse número.
 
-The next column (highlighted in blue) shows the `RPS` of each server. In this case this metric is not the most reliable since locust tries to send the same amount of traffic to each service but there is some variance in this process. Because of this it is better to take decisions based on the latency information which is agnostic to the amount of requests.
+A próxima coluna (destacada em azul) mostra o `RPS` de cada servidor. Nesse caso, essa métrica não é a mais confiável, pois o locust tenta enviar a mesma quantidade de tráfego para cada serviço, mas há alguma variação nesse processo. Por esse motivo, é melhor tomar decisões com base nas informações de latência, que são independentes da quantidade de solicitações.
 
-Now it is your turn to play some more with this. To stop the current test click on the `Stop` button in the upper right corner of the screen. Now you can submit new values for the Number of users and Spawn rate. You should be safe using values up to 500 so try a couple of different values and see what you get!
+Agora é sua vez de brincar um pouco mais com isso. Para interromper o teste atual, clique no botão `Stop` no canto superior direito da tela. Agora você pode enviar novos valores para o Número de usuários e a Taxa de geração. Você deve estar seguro usando valores de até 500, portanto, experimente alguns valores diferentes e veja o resultado!
 
-## Stopping the application
+## Interromper o aplicativo
 
-Once you are done with this lab go into the terminal window where you run the `docker-compose up` command and use the key combination `ctrl + c` once to stop the multi-container application. 
+Quando terminar este laboratório, vá para a janela do terminal onde executou o comando `docker-compose up` e use a combinação de teclas `ctrl + c` uma vez para interromper o aplicativo de vários contêineres. 
 
-At this point the containers have been stopped but not removed. To remove them along with the network that was created use the `docker-compose down` command.
+Nesse ponto, os contêineres foram interrompidos, mas não removidos. Para removê-los juntamente com a rede que foi criada, use o comando `docker-compose down`.
 
 ----
-**Congratulations on finishing this ungraded lab!**
+**Parabéns por ter concluído este laboratório!**
 
-In this lab you saw how to use Docker Compose to run multiple-container applications by setting a configuration file in `YAML` format. This is a much better alternative than spinning and linking the containers manually as it handles most of this for you. You also were exposed to Locust and how it can be leveraged to perform load testing on your servers.
+Neste laboratório, você viu como usar o Docker Compose para executar aplicativos com vários contêineres definindo um arquivo de configuração no formato `YAML`. Essa é uma alternativa muito melhor do que girar e vincular os contêineres manualmente, pois ele cuida da maior parte disso para você. Você também foi exposto ao Locust e como ele pode ser aproveitado para realizar testes de carga em seus servidores.
 
-Now you should have a clearer understanding of how to use these tools to create production-ready services that will endure the conditions they will be exposed to once deployed to the outside world.
+Agora você deve ter uma compreensão mais clara de como usar essas ferramentas para criar serviços prontos para produção que suportarão as condições às quais serão expostos quando forem implantados no mundo externo.
 
-**Keep it up!**
+**Continue assim!**
