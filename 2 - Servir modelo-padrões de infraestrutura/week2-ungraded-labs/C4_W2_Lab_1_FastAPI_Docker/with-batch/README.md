@@ -124,3 +124,5 @@ Como alternativa, você pode usar o comando `docker ps` para verificar o nome do
 Agora você deve ter uma melhor compreensão de como os servidores da Web podem ser usados para hospedar seus modelos de aprendizado de máquina. Você viu como pode usar uma biblioteca como a FastAPI para codificar o servidor e usar o Docker para enviar o servidor junto com o modelo de maneira fácil. Você também aprendeu sobre alguns conceitos-chave do Docker, como `image tagging`(marcação de imagens) e `port mapping`(mapeamento de portas), e como permitir a criação de lotes nas solicitações. Em geral, você deve ter uma ideia mais clara de como todas essas tecnologias interagem para hospedar modelos em produção.
 
 **Continue assim!**
+
+Vamos agora para o laboratório [Introdução ao Kubernetes](../../C4_W2_Lab_2_Intro_to_Kubernetes/README.md)!
