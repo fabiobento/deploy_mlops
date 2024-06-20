@@ -50,7 +50,20 @@ Por fim, a implantação ativará ou desativará os pods com base na utilizaçã
 
 Agora você está quase pronto para iniciar seu cluster do Kubernetes. Há apenas mais uma etapa adicional. Como mencionado anteriormente, o Minikube é executado dentro de uma máquina virtual. Isso significa que os pods que você criará posteriormente só verão os volumes dentro dessa VM. Portanto, se você quiser carregar um modelo em seus pods, deverá primeiro montar o local desse modelo dentro da VM do Minikube. Vamos configurar isso agora.
 
-Você usará o modelo `half_plus_two` que viu anteriormente. Você pode copiá-lo para o diretório `/var/tmp`. Você pode usar o comando abaixo:
+Você usará o modelo `half_plus_two` que viu anteriormente.
+
+Se você não trabalhou anteriormente no laboratório "Primeira olhada no *Tensorflow Serving* com o Docker", execute os três comandos a seguir:
+
+```bash
+mkdir -p /tmp/tfserving
+
+cd /tmp/tfserving
+
+git clone https://github.com/tensorflow/serving
+```
+
+
+Você pode copiar o modelo para o diretório `/var/tmp` usando o comando abaixo:
 
 ```
 cp -R ./saved_model_half_plus_two_cpu /var/tmp
