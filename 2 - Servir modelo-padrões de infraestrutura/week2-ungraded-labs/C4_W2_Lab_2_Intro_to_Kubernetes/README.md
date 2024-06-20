@@ -284,3 +284,4 @@ Se você usou o Powershell, poderá desativar o scripting conforme mencionado na
 
 Neste laboratório, você praticou mais noções básicas do Kubernetes usando arquivos de configuração YAML e executando o contêiner Tensorflow Serving. Essa pode ser uma linha de base para você começar a tentar atender aos seus próprios modelos com uma estrutura de orquestração em mente. A maioria dos conceitos aqui será aplicável ao Qwiklabs desta semana, portanto, fique à vontade para consultar este documento. Bom trabalho e vamos para a próxima parte do curso!
 
+Agora vamos para o próximo tutorial:  [Servidores de teste de carga com Docker Compose e Locust](../C4_W2_Lab_3_Latency_Test_Compose/README.md)!
