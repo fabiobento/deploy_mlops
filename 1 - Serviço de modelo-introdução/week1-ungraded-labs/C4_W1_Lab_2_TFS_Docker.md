@@ -141,3 +141,5 @@ Agora você deve ter uma noção melhor de como o Docker pode ser aproveitado pa
 Este laboratório usou um modelo fictício, mas nos próximos laboratórios você verá esse processo com modelos reais e outros recursos do TFS.
 
 **Continue assim!**
+
+Siga agora para o laboratório (Servir um modelo com o TensorFlow Serving)[https://colab.research.google.com/github/fabiobento/deploy_mlops/blob/main/1%20-%20Servi%C3%A7o%20de%20modelo-introdu%C3%A7%C3%A3o/week1-ungraded-labs/C4_W1_Lab_3_TFS.ipynb]
