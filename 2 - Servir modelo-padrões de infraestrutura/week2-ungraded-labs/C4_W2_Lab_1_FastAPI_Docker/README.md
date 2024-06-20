@@ -4,7 +4,7 @@ Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses
 
 Durante este laboratório você implantará um servidor da Web que hospeda um modelo preditivo treinado no [wine dataset](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_wine.html#sklearn.datasets.load_wine) usando [FastApi](https://fastapi.tiangolo.com/) e [Docker](https://www.docker.com/).
 
-Neste laboratório você um modelo ao Docker para que ele seja portátil e possa ser implantado com mais facilidade.
+Neste laboratório você servirá um modelo com Docker para que ele seja portátil e possa ser implantado com mais facilidade.
 
 Observe que, neste laboratório, você usará um modelo classificador simples que consiste em um  [StandardScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html) e um [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) com florestas de 10 árvores. Utilizaremos esse modelo simples para evitar o uso de bibliotecas como o Tensorflow, que, devido ao seu tamanho, produzirá tempos de compilação muito mais longos ao criar a imagem do Docker.
 
