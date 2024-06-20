@@ -4,6 +4,7 @@ Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses
 Nesse laboratório utilizaremos o Kubernetes e, antes de prosseguir, recomendo que você dê uma olhada em como ele funciona. O site é
 https://kubernetes.io/
 e, na parte superior da página, há um grande botão que diz "*Learn Kubernetes Basics*" (Aprenda o básico do Kubernetes).
+
 <img src='img/introk8s.png ' alt='img/kubernetes.png'>
 
 Clique nele e você será direcionado para: 
