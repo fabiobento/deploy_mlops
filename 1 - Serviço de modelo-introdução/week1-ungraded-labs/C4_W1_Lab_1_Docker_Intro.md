@@ -83,4 +83,4 @@ Se o comando `curl` não for reconhecido, você poderá instalá-lo em um comput
 apt-get install curl
 ```
 
-Agora você está pronto para seguir em frente com o restante dos laboratórios! **Bom trabalho!**
+Agora você está pronto para seguir em frente para o laboratório [sobre o Tensorflow Serving com o Docker](./C4_W1_Lab_2_TFS_Docker.md).
