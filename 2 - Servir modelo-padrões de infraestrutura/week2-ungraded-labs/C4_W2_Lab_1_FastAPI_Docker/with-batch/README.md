@@ -125,4 +125,4 @@ Agora você deve ter uma melhor compreensão de como os servidores da Web podem 
 
 **Continue assim!**
 
-Vamos agora para o laboratório [Introdução ao Kubernetes](../../C4_W2_Lab_2_Intro_to_Kubernetes/README.md)!
+Vamos agora para o laboratório [Introdução ao Kubernetes](../../C4_W2_Lab_2_Intro_to_Kubernetes/README.md).
