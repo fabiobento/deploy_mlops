@@ -293,8 +293,7 @@ curl -X 'POST' http://localhost/predict \
 }'
 ```
 
-Ou você pode usar um arquivo `JSON` para evitar digitar um comando longo como este:
-
+Ou você pode usar um arquivo `JSON` para evitar digitar um comando longo. Para isso abra um novo terminal, entre no diretório desse tutorial e digite o seguinte comando:
 ```bash
 curl -X POST http://localhost:80/predict \
     -d @./wine-examples/1.json \
