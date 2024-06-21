@@ -34,7 +34,7 @@ Para clonar esse repositório, use o seguinte comando:
 ```bash
 git clone https://github.com/fabiobento/deploy_mlops.git
 ```
-Em seguida entre no diretório raiz do repositório digitando a seguinte linha de comando/;
+Em seguida entre no diretório raiz do repositório digitando a seguinte linha de comando:
 
 ```bash
 cd deploy_mlops
