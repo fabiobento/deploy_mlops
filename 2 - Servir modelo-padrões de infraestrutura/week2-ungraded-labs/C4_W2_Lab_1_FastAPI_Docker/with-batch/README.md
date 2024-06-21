@@ -100,7 +100,7 @@ Agora, vá até [localhost:81] (http://localhost:81) e você verá uma mensagem 
 
 Mais uma vez, é hora de testar seu servidor usando-o de fato para fazer previsões. Da mesma forma que antes, há alguns exemplos de lotes de dados no diretório `wine-examples`. 
 
-Para obter as previsões de um lote de 32 vinhos (encontradas no arquivo batch_1.json), você pode enviar uma solicitação `POST` para o servidor usando `curl` como esta:
+Para obter as previsões de um lote de 32 vinhos (encontradas no arquivo batch_1.json), você pode enviar uma solicitação `POST` para o servidor usando `curl` como esta (lembre-se de entrar antes no diretório desse tutorial):
 
 ```bash
 curl -X POST http://localhost:81/predict \
