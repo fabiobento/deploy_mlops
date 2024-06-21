@@ -1,7 +1,11 @@
 Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses/machine-learning-in-production/) de [Andrew Ng](https://www.deeplearning.ai/)  ([Stanford University](http://online.stanford.edu/), [DeepLearning.AI](https://www.deeplearning.ai/))
 
 ## Uma previsão por solicitação
-Você pode encontrar todo o código a seguir no diretório `no-batch/`. Em seu terminal, digite `cd` nesse diretório para continuar com o laboratório. Se você estiver no momento na raiz do repositório, poderá usar o comando `cd 2\ -\ Servir\ modelo-padrões\ de\ infraestrutura/week2-ungraded-labs/C4_W2_Lab_1_FastAPI_Docker/no-batch/`.
+Em seu terminal, partir da raiz do repositório que você clonou anteriormente, digite a seguinte linha de comando para entrar no diretório dessa parte do tutorial:
+
+```bash
+cd 2\ -\ Servir\ modelo-padrões\ de\ infraestrutura/week2-ungraded-labs/C4_W2_Lab_1_FastAPI_Docker/no-batch/
+```
 
 Observe que o código do servidor deve estar no arquivo `main.py` em um diretório chamado `app`, seguindo as diretrizes da FastAPI.
 
