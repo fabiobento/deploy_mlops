@@ -4,7 +4,7 @@ Adaptado de [Machine Learning in Production](https://www.deeplearning.ai/courses
 
 Agora que você viu como codificar um servidor da Web que serve um modelo para inferência, é hora de implementar algum código que permita obter previsões em lote. Isso é muito importante porque, no momento, seu servidor só pode lidar com uma previsão por solicitação e você está perdendo esse recurso para o qual a maioria dos preditores de aprendizado de máquina foi otimizada.
 
-Inicie o `cd` no diretório `with-batch`. Se você estiver atualmente no diretório `no-batch`, poderá usar o comando `cd ../with-batch`.
+Inicie utilizando o comando `cd` para entrar no diretório `with-batch`. Se você estiver atualmente no diretório `no-batch`, poderá usar o comando `cd ../with-batch`.
 
 ## Aualize o servidor
 
