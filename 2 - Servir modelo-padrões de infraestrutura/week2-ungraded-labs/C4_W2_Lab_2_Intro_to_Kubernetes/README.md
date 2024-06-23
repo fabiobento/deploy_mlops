@@ -68,7 +68,7 @@ Você pode copiar o modelo para o diretório `/var/tmp` usando o comando abaixo:
 ```
 cp -R /tmp/tfserving/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_two_cpu /var/tmp
 ```
-Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar o Virtualbox e montar a pasta que contém seu arquivo de modelo:
+Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar o Minikube com Docker e montar a pasta que contém seu arquivo de modelo:
    ```
    minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=docker
   ```
