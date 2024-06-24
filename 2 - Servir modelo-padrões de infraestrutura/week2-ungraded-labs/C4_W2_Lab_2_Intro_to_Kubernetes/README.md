@@ -101,7 +101,14 @@ Primeiro, você criará um [config map](https://kubernetes.io/docs/concepts/conf
 tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=${MODEL_NAME} --model_base_path=${MODEL_BASE_PATH}/${MODEL_NAME} "$@"
 ```
 
-Basicamente, ele inicia o servidor de modelos e usa as variáveis de ambiente `MODEL_BASE_PATH` e `MODEL_NAME` para localizar o modelo. Embora você também possa definir isso explicitamente no arquivo YAML `Deployment`, seria mais organizado tê-lo em um configmap para que você possa conectá-lo posteriormente. Abra `yaml/configmap.yaml` para ver a sintaxe.
+Basicamente, ele inicia o servidor de modelos e usa as variáveis de ambiente `MODEL_BASE_PATH` e `MODEL_NAME` para localizar o modelo. Embora você também possa definir isso explicitamente no arquivo YAML `Deployment`, seria mais organizado tê-lo em um configmap para que você possa conectá-lo posteriormente.
+
+Primeiro vá para a raiz do diretório `deply_mlops` que você clonou anteriormente. Agora vá para o diretório desse tutorial como o seguinte comando:
+```bash
+cd 2\ -\ Servir\ modelo-padrões\ de\ infraestrutura/week2-ungraded-labs/C4_W2_Lab_2_Intro_to_Kubernetes/
+```
+
+Agora abra `yaml/configmap.yaml` para ver a sintaxe.
 
 Você pode criar o objeto agora usando o `kubectl`, conforme mostrado abaixo. Observe o sinalizador `-f` para especificar um nome de arquivo.
 
