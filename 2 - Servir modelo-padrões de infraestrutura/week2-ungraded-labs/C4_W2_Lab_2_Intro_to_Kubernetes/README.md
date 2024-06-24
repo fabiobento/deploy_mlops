@@ -145,7 +145,12 @@ Como antes, você pode aplicar esse arquivo para criar o objeto:
 kubectl apply -f yaml/deployment.yaml
 ```
 
-A execução de `kubectl get deploy` após cerca de 90 segundos deve mostrar algo como o que está abaixo para informar que a implantação está pronta.
+A execução de
+
+```bash
+kubectl get deploy
+```
+após cerca de 90 segundos deve mostrar algo como o que está abaixo para informar que a implantação está pronta.
 
 ```
 NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
@@ -156,7 +161,16 @@ tf-serving-deployment   1/1     1            1           15s
 
 Como você aprendeu anteriormente no tutorial do Kubernetes, será necessário criar um serviço para que seu aplicativo possa ser acessado fora do cluster. Incluímos o `yaml/service.yaml` para isso. Ele define um serviço [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) que expõe a porta 30001 do nó. As solicitações enviadas para essa porta serão enviadas para a `targetPort` especificada pelos contêineres, que é `8501`. 
 
-Aplique `kubectl apply -f yaml/service.yaml` e execute `kubectl get svc tf-serving-service`. Você deverá ver algo parecido com isto:
+Aplique
+```bash
+kubectl apply -f yaml/service.yaml
+``` 
+e execute
+```bash
+kubectl get svc tf-serving-service
+```
+
+ Você deverá ver algo parecido com isto:
 
 ```
 NAME                 TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
@@ -169,7 +183,11 @@ Você pode tentar acessar a implantação agora para uma verificação se está 
 curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST $(minikube ip):30001/v1/models/half_plus_two:predict
 ```
 
-Se o comando acima não funcionar, você pode executar `minikube ip` primeiro para obter o endereço IP do nó do Minikube. Ele deve retornar um endereço IP local como `192.168.99.102` (se você vir `127.0.0.1`, consulte as seções de solução de problemas abaixo). Você pode então inserir esse endereço no comando acima substituindo a string `$(minikube ip)`. Por exemplo:
+Se o comando acima não funcionar, você pode executar primeiro
+```bash
+minikube ip
+```
+para obter o endereço IP do nó do Minikube. Ele deve retornar um endereço IP local como `192.168.99.102` (se você vir `127.0.0.1`, consulte as seções de solução de problemas abaixo). Você pode então inserir esse endereço no comando acima substituindo a string `$(minikube ip)`. Por exemplo:
 
 ```
 curl -d '{"instances": [1.0, 2.0, 5.0]}' -X POST http://192.168.99.102:30001/v1/models/half_plus_two:predict
@@ -210,8 +228,15 @@ NAME             READY   UP-TO-DATE   AVAILABLE   AGE
 metrics-server   1/1     1            1           76s
 ```
 
-Com isso, agora você pode criar seu autoscaler aplicando `kubectl apply -f yaml/autoscale.yaml`. Aguarde cerca de um minuto para que ele possa consultar o servidor de métricas. A execução de `kubectl get hpa` deve mostrar: 
-
+Com isso, agora você pode criar seu autoscaler aplicando o seguinte comando:
+```bash
+kubectl apply -f yaml/autoscale.yaml
+```
+Aguarde cerca de um minuto para que ele possa consultar o servidor de métricas. A execução do comando
+```bash
+kubectl get hpa
+```
+deve mostrar: 
 ```
 NAME             REFERENCE                          TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 tf-serving-hpa   Deployment/tf-serving-deployment   0%/2%    1         3         1          38s
