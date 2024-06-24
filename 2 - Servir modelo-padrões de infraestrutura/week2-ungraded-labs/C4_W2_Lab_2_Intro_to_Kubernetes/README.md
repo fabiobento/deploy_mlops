@@ -31,7 +31,7 @@ Você precisará instalar as seguintes ferramentas para realizar este laboratór
 
 * **curl** - uma ferramenta de linha de comando para transferência de dados usando vários protocolos de rede. É possível que você já tenha instalado isso anteriormente, mas, caso não tenha, [aqui está uma referência](https://reqbin.com/Article/InstallCurl) para fazer isso. Você usará isso para consultar seu modelo mais tarde.
 
-* **Docker** - O Minikube foi projetado para ser executado virtualizado em uma VM ou container. Por isso vamos utilizar o [Docker](https://docs.docker.com/engine/install/) 18.09 or higher (20.10 ou superior é o remcomentado).
+* **Virtualbox** - O Minikube foi projetado para ser executado em uma máquina virtual (VM), portanto, você precisará de um software de virtualização para atuar como driver da VM. Embora você também possa especificar o docker como o driver da VM, descobrimos que o minikibe tem limitações com ele, portanto, é melhor usar o Virtualbox. As instruções de instalação podem ser encontradas [aqui](https://www.virtualbox.org/wiki/Downloads). Quando solicitado pelo seu sistema operacional, certifique-se de permitir o tráfego de rede para esse software para não ter problemas com o firewall posteriormente.
 
 * **kubectl** - a ferramenta de linha de comando para interagir com clusters do Kubernetes. As instruções de instalação podem ser encontradas [aqui](https://kubernetes.io/docs/tasks/tools/).
 
@@ -68,9 +68,9 @@ Você pode copiar o modelo para o diretório `/var/tmp` usando o comando abaixo:
 ```
 cp -R /tmp/tfserving/serving/tensorflow_serving/servables/tensorflow/testdata/saved_model_half_plus_two_cpu /var/tmp
 ```
-Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar o Minikube com Docker e montar a pasta que contém seu arquivo de modelo:
+Agora você está pronto para iniciar o Minikube! Execute o comando abaixo para inicializar o Minikube com Virtualbox e montar a pasta que contém seu arquivo de modelo:
    ```
-   minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=docker
+   minikube start --mount=True --mount-string="/var/tmp:/var/tmp" --vm-driver=virtualbox
   ```
 
 
