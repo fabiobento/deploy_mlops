@@ -103,7 +103,7 @@ tensorflow_model_server --port=8500 --rest_api_port=8501 --model_name=${MODEL_NA
 
 Basicamente, ele inicia o servidor de modelos e usa as variáveis de ambiente `MODEL_BASE_PATH` e `MODEL_NAME` para localizar o modelo. Embora você também possa definir isso explicitamente no arquivo YAML `Deployment`, seria mais organizado tê-lo em um configmap para que você possa conectá-lo posteriormente.
 
-Primeiro vá para a raiz do diretório `deply_mlops` que você clonou anteriormente. Agora vá para o diretório desse tutorial como o seguinte comando:
+Primeiro vá para a raiz do diretório `deploy_mlops` que você clonou anteriormente. Agora vá para o diretório desse tutorial como o seguinte comando:
 ```bash
 cd 2\ -\ Servir\ modelo-padrões\ de\ infraestrutura/week2-ungraded-labs/C4_W2_Lab_2_Intro_to_Kubernetes/
 ```
