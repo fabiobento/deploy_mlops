@@ -19,9 +19,14 @@ Você rodará um total de 5 contêineres, 4 para cada um dos servidores menciona
 docker pull locustio/locust
 ```
 
-Você também deve ter as imagens `mlepc4w2-ugl:no-batch` e `mlepc4w2-ugl:with-batch` que você criou durante o laboratório anterior. **Antes de prosseguir, verifique se você tem essas duas imagens, bem como a imagem `locustio/locust:latest`**. Você pode verificar novamente usando o comando `docker images`. 
-
-Abra um terminal e acesse o diretório que contém os arquivos necessários para este laboratório. Supondo que você esteja na raiz do repositório, use o comando `cd course4/week2-ungraded-labs/C4_W2_Lab_3_Latency_Test_Compose`.
+Você também deve ter as imagens `mlepc4w2-ugl:no-batch` e `mlepc4w2-ugl:with-batch` que você criou durante o laboratório anterior. **Antes de prosseguir, verifique se você tem essas duas imagens, bem como a imagem `locustio/locust:latest`**. Você pode verificar novamente usando o seguinte comando:
+```bash
+ docker images
+```
+Abra um terminal e acesse o diretório que contém os arquivos necessários para este laboratório. Supondo que você esteja na raiz do repositório, use o comando:
+```bash
+cd 2\ -\ Servir\ modelo-padrões\ de\ infraestrutura/week2-ungraded-labs/C4_W2_Lab_3_Latency_Test_Compose/
+```
 
 Vamos começar!
 
@@ -183,7 +188,7 @@ Agora que você entende como o locust funciona, finalmente chegou a hora de real
 Verifique se você está no mesmo diretório dos arquivos `locustfile.py` e `docker-compose.yml` e execute o seguinte comando:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 O Docker Compose ativará automaticamente todos os seus serviços e criará uma rede para que eles se comuniquem. Não é bacana?
@@ -210,14 +215,14 @@ Agora é sua vez de brincar um pouco mais com isso. Para interromper o teste atu
 
 ## Interromper o aplicativo
 
-Quando terminar este laboratório, vá para a janela do terminal onde executou o comando `docker-compose up` e use a combinação de teclas `ctrl + c` uma vez para interromper o aplicativo de vários contêineres. 
+Quando terminar este laboratório, vá para a janela do terminal onde executou o comando `docker compose up` e use a combinação de teclas `ctrl + c` uma vez para interromper o aplicativo de vários contêineres. 
 
-Nesse ponto, os contêineres foram interrompidos, mas não removidos. Para removê-los juntamente com a rede que foi criada, use o comando `docker-compose down`.
+Nesse ponto, os contêineres foram interrompidos, mas não removidos. Para removê-los juntamente com a rede que foi criada, use o comando `docker compose down`.
 
 ----
 **Parabéns por ter concluído este laboratório!**
 
-Neste laboratório, você viu como usar o Docker Compose para executar aplicativos com vários contêineres definindo um arquivo de configuração no formato `YAML`. Essa é uma alternativa muito melhor do que girar e vincular os contêineres manualmente, pois ele cuida da maior parte disso para você. Você também foi exposto ao Locust e como ele pode ser aproveitado para realizar testes de carga em seus servidores.
+Neste laboratório, você viu como usar o Docker Compose para executar aplicativos com vários contêineres definindo um arquivo de configuração no formato `YAML`. Essa é uma alternativa muito melhor do que rodar e vincular os contêineres manualmente, pois ele cuida da maior parte disso para você. Você também foi exposto ao Locust e como ele pode ser aproveitado para realizar testes de carga em seus servidores.
 
 Agora você deve ter uma compreensão mais clara de como usar essas ferramentas para criar serviços prontos para produção que suportarão as condições às quais serão expostos quando forem implantados no mundo externo.
 
